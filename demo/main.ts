@@ -16,7 +16,7 @@ import ElasticList from '../src/main.ts'
 /*Vue.use(ElasticList, {
     isTable: true,
     editable: false,
-    rowCount: [1,4],
+    count: [1,4],
     rowTemplate: {name: 'name'},
 })*/
 

@@ -3,7 +3,11 @@
     <template v-if="IsTable">
       <el-table :data="value" v-bind="ElTableProps">
         <slot/>
-        <slot name="operation-column" v-if="Editable">
+        <slot name="operation-column"
+              v-if="Editable"
+              :showDelBtn="!minRow||value__.length>minRow"
+              :deleteRow="deleteRow"
+        >
           <el-table-column label="操作" align="center">
             <template slot-scope="scope">
               <el-button type="danger"
@@ -49,7 +53,7 @@
 import 'animate.css'
 import Sortable from 'sortablejs'
 import { isEqualWith, cloneDeep } from 'lodash'
-import { isTable, elTableProps, editable, rowCount, rowTemplate } from './config.ts'
+import { isTable, elTableProps, editable, count, rowTemplate } from './config.ts'
 
 export default {
   name: 'ElasticList',
@@ -61,7 +65,7 @@ export default {
     value: {
       validator: value => ['Null', 'Array'].includes(({}).toString.call(value).slice(8, -1)),
     },
-    rowCount: {
+    count: {
       type: [Number, Array]
     },
     rowTemplate: Object,
@@ -123,15 +127,15 @@ export default {
       return this.rowTemplate || rowTemplate || {}
     },
     maxRow () {
-      const globalRowCount = this.rowCount || rowCount
-      if (globalRowCount) {
-        return globalRowCount instanceof Array ? globalRowCount[1] : globalRowCount
+      const globalCount = this.count || count
+      if (globalCount) {
+        return globalCount instanceof Array ? globalCount[1] : globalCount
       }
     },
     minRow () {
-      const globalRowCount = this.rowCount || rowCount
-      if (globalRowCount instanceof Array) {
-        return globalRowCount[0]
+      const globalCount = this.count || count
+      if (globalCount instanceof Array) {
+        return globalCount[0]
       }
     }
   },

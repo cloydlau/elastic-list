@@ -4,10 +4,25 @@
                  :isTable="isTable"
                  :editable="editable"
                  :rowTemplate="rowTemplate"
-                 :rowCount="rowCount"
+                 :count="count"
                  :elTableProps="elTableProps"
+                 ref="elasticList"
     >
-      <el-table-column v-if="isTable" label="类型" prop="name"/>
+      <el-table-column label="类型" prop="name" v-if="isTable"/>
+      <!--覆盖默认的操作列-->
+      <!--<template #operation-column="{showDelBtn,deleteRow}" v-if="isTable">
+        <el-table-column label="操作" align="center">
+          <template slot-scope="scope">
+            <el-button>其他按钮</el-button>
+            <el-button type="danger"
+                       circle
+                       icon="el-icon-delete"
+                       @click="()=>{deleteRow(scope.$index)}"
+                       v-show="showDelBtn"
+            />
+          </template>
+        </el-table-column>
+      </template>-->
 
       <!--<template v-slot> can only appear at the root level inside the receiving component-->
       <template v-if="!isTable" v-slot="{v,i,showDelBtn,deleteRow}">
@@ -73,23 +88,23 @@
       <div v-show="editable">
         <el-collapse-item>
           <template slot="title">
-            <span class="title">【rowCount】行数限制</span>
-            <el-radio v-model="rowCountType__" label="Number">Number</el-radio>
-            <el-radio v-model="rowCountType__" label="Array">Array</el-radio>
+            <span class="title">【count】行数限制</span>
+            <el-radio v-model="countType__" label="Number">Number</el-radio>
+            <el-radio v-model="countType__" label="Array">Array</el-radio>
           </template>
           <el-card>
             <div slot="header">
-              <el-input-number v-model="rowCount" clearable :min="1" v-if="rowCountType__==='Number'"/>
+              <el-input-number v-model="count" clearable :min="1" v-if="countType__==='Number'"/>
               <el-slider v-else
-                         v-model="rowCount"
+                         v-model="count"
                          range
                          show-stops
                          :max="5"
               />
             </div>
             <el-tag type="success">默认值：undefined（不作限制）</el-tag>
-            <el-tag v-show="rowCountType__==='Number'">最大行数限制</el-tag>
-            <el-tag v-show="rowCountType__==='Array'">['最小行数限制', '最大行数限制']</el-tag>
+            <el-tag v-show="countType__==='Number'">最大行数限制</el-tag>
+            <el-tag v-show="countType__==='Array'">['最小行数限制', '最大行数限制']</el-tag>
           </el-card>
         </el-collapse-item>
         <el-collapse-item>
@@ -123,10 +138,10 @@ export default {
       rowTemplate: {
         name: 'new'
       },
-      rowCount: 5,
+      count: 5,
       elTableProps: {},
 
-      rowCountType__: 'Number',
+      countType__: 'Number',
       showDialog: true,
     }
   },
