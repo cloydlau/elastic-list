@@ -6,7 +6,6 @@
                  :rowTemplate="rowTemplate"
                  :count="count"
                  :elTableProps="elTableProps"
-                 ref="elasticList"
     >
       <el-table-column label="类型" prop="name" v-if="isTable"/>
       <!--覆盖默认的操作列-->
