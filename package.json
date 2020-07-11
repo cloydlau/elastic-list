@@ -1,14 +1,16 @@
 {
   "name": "elastic-list",
-  "version": "0.0.1",
+  "version": "0.0.2",
   "author": "cloydlau",
   "license": "MIT",
   "description": "A drag-and-drop & editable table, custom list supported.",
   "keywords": [
+    "dynamic",
     "sortable",
     "editable",
     "elastic",
     "flexible",
+    "draggable",
     "drag-and-drop",
     "table",
     "list"
