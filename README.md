@@ -1,6 +1,6 @@
 # elastic-list / 动态列表&动态表格
 
-![preview](./preview.png)
+![preview](./preview.gif)
 
 ### Feature
 
