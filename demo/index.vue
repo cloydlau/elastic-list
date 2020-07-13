@@ -21,7 +21,7 @@
 
     <!--列表展示-->
     <ElasticList v-model="value" v-bind="props" v-else>
-      <template v-if="!props.isTable" v-slot="{v,i,showDelBtn,deleteRow}">
+      <template v-slot="{v,i,showDelBtn,deleteRow}">
         <div class="row">
           <i class="el-icon-circle-close"
              @click="deleteRow(i)"
@@ -30,7 +30,7 @@
           {{v}}
         </div>
       </template>
-      <el-button v-if="!props.isTable" slot="append-row-btn">自定义添加行按钮</el-button>
+      <el-button slot="append-row-btn">自定义增加行按钮</el-button>
     </ElasticList>
 
     <PropsEditor v-model="props"/>
