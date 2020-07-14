@@ -1,5 +1,5 @@
 <template>
-  <div>
+  <div style="margin-bottom: 200px;">
     <h2>props</h2>
     <el-collapse>
       <el-collapse-item>
@@ -113,5 +113,13 @@ h2 {
 
 .title {
   margin-right: 16px;
+}
+
+::v-deep .el-collapse-item__wrap {
+  overflow: unset;
+
+  .el-card {
+    overflow: unset;
+  }
 }
 </style>
