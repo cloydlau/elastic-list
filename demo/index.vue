@@ -160,6 +160,14 @@ h2 {
   margin-right: 16px;
 }
 
+::v-deep .el-collapse-item__wrap {
+  overflow: unset;
+
+  .el-card {
+    overflow: unset;
+  }
+}
+
 .row {
   border: 1px solid lightgrey;
   border-radius: 3px;
