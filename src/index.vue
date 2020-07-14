@@ -1,7 +1,8 @@
 <template>
   <div class="elastic-list">
+    <!--<div v-for="v of value">{{v}}</div>-->
     <template v-if="IsTable">
-      <el-table :data="value" v-bind="ElTableProps">
+      <el-table :data="value__" v-bind="ElTableProps">
         <slot/>
         <slot name="operation-column"
               v-if="Editable"
@@ -25,14 +26,14 @@
                  icon="el-icon-plus"
                  class="append-row-btn"
                  @click="appendRow"
-                 v-show="!maxRow||value.length<maxRow"
+                 v-show="!maxRow||value__.length<maxRow"
       />
     </template>
 
     <template v-else>
       <transition-group class="list-wrapper"
                         :enter-active-class="sorting?'':'animate__animated animate__zoomIn'">
-        <div v-for="(v,i) of value" :key="i">
+        <div v-for="(v,i) of value__" :key="v[rowKey]">
           <slot :v="v"
                 :i="i"
                 :showDelBtn="Editable&&!minRow||value__.length>minRow"
@@ -42,7 +43,7 @@
       </transition-group>
       <span v-if="Editable"
             @click="appendRow"
-            v-show="!maxRow||value.length<maxRow">
+            v-show="!maxRow||value__.length<maxRow">
         <slot name="append-row-btn"/>
       </span>
     </template>
@@ -52,8 +53,9 @@
 <script>
 import 'animate.css'
 import Sortable from 'sortablejs'
-import { isEqualWith, cloneDeep } from 'lodash'
+import cloneDeep from 'lodash/cloneDeep'
 import { isTable, elTableProps, editable, count, rowTemplate } from './config.ts'
+import { v1 as uuidv1 } from 'uuid'
 
 export default {
   name: 'ElasticList',
@@ -68,7 +70,7 @@ export default {
     count: {
       type: [Number, Array]
     },
-    rowTemplate: Object,
+    rowTemplate: [Object, Function],
     elTableProps: Object,
     editable: {
       type: Boolean,
@@ -82,6 +84,7 @@ export default {
   computed: {
     ElTableProps () {
       return {
+        rowKey: this.rowKey,
         border: true,
         fit: true,
         stripe: true,
@@ -104,14 +107,14 @@ export default {
           onEnd: ({ newIndex, oldIndex }) => {
             const copy = cloneDeep(this.value__)
             copy.splice(newIndex, 0, copy.splice(oldIndex, 1)[0])
-            //解决：顺序改变不触发el-table更新data
-            this.value__ = []
+            //fix: 视图不更新
+            //this.value__ = []
+            //this.$nextTick(() => {
+            this.value__ = copy
             this.$nextTick(() => {
-              this.value__ = copy
-              this.$nextTick(() => {
-                this.sorting = false
-              })
+              this.sorting = false
             })
+            //})
           }
         })
       })
@@ -139,28 +142,41 @@ export default {
       }
     }
   },
+  created () {
+    const unwatch = this.$watch('value', (newVal, oldVal) => {
+      if (newVal?.length > 0) {
+        this.value__ = newVal.map(v => ({
+          [this.rowKey]: uuidv1(),
+          ...v,
+        }))
+        unwatch && unwatch() //仅初始化赋值一次 第一次触发时unwatch为空 所以需要判空
+      }
+    }, {
+      deep: true,
+      immediate: true
+    })
+  },
   data () {
     return {
       show: true,
       value__: [],
-      sorting: false
+      sorting: false,
+      //uuid: 0,
+      //weakMap: new weakMap(),
+      rowKey: '__key',
     }
   },
   watch: {
-    value: {
-      immediate: true,
-      deep: true,
-      handler (newVal) {
-        this.value__ = newVal || []
-      }
-    },
     value__: {
       deep: true,
       handler (newVal, oldVal) {
-        //避免死循环
-        if (!isEqualWith(newVal, this.value)) {
-          this.$emit('change', newVal)
-        }
+        //if (!isEqualWith(newVal, this.value)) {
+        this.$emit('change', cloneDeep(newVal).map(v => {
+          delete v[this.rowKey]
+          return v
+        }))
+        //this.$emit('change', newVal)
+        //}
       }
     },
   },
@@ -183,11 +199,20 @@ export default {
       })
     },*/
     appendRow () {
-      this.value__.push(this.RowTemplate)
+      this.value__.push({
+        ...this.RowTemplate instanceof Function ? this.RowTemplate() : this.RowTemplate,
+        [this.rowKey]: uuidv1()
+      })
     },
     deleteRow (index) {
       this.value__.splice(index, 1)
-    }
+    },
+    /*getUuid (obj) {
+      if (!this.weakMap.has(obj)) {
+        this.weakMap.set(obj, ++this.uuid)
+      }
+      return this.weakMap.get(obj)
+    },*/
   },
 }
 </script>

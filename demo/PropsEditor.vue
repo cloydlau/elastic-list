@@ -73,7 +73,8 @@
         <el-collapse-item>
           <template slot="title">
             <span class="title">【rowTemplate】新增加row对应的对象模板</span>
-            <el-tag>Object</el-tag>
+            <el-radio v-model="rowTemplateType__" label="Object">Object</el-radio>
+            <el-radio v-model="rowTemplateType__" label="Function" disabled>Function</el-radio>
           </template>
           <el-card>
             <div slot="header">
@@ -95,6 +96,7 @@ export default {
   data () {
     return {
       countType__: 'Number',
+      rowTemplateType__: 'Object',
     }
   },
 }

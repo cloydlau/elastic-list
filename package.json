@@ -1,6 +1,6 @@
 {
   "name": "elastic-list",
-  "version": "0.0.2",
+  "version": "0.0.4",
   "author": "cloydlau",
   "license": "MIT",
   "description": "A drag-and-drop & editable table, custom list supported.",
@@ -30,7 +30,8 @@
     "animate.css": "^4.1.0",
     "core-js": "^3.6.0",
     "lodash": "^4.17.19",
-    "sortablejs": "^1.10.2"
+    "sortablejs": "^1.10.2",
+    "uuid": "^8.2.0"
   },
   "peerDependencies": {
     "element-ui": "^2.13.2",

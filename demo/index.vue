@@ -47,12 +47,12 @@ export default {
   data () {
     return {
       value: Array.from(Array(3)).map((v, i) => ({ name: i })),
-      props:{
+      props: {
         isTable: true,
         editable: true,
-        rowTemplate: {
-          name: 'new'
-        },
+        rowTemplate: () => ({
+          name: Math.random()
+        }),
         count: 5,
         elTableProps: {},
       },
