@@ -1,6 +1,6 @@
 {
   "name": "elastic-list",
-  "version": "0.0.4",
+  "version": "0.0.5",
   "author": "cloydlau",
   "license": "MIT",
   "description": "A drag-and-drop & editable table, custom list supported.",
@@ -20,9 +20,6 @@
   "repository": {
     "type": "git",
     "url": ""
-  },
-  "publishConfig": {
-    "registry": "https://npm.pkg.github.com/"
   },
   "scripts": {
     "dev": "vue-cli-service serve",
@@ -44,6 +41,7 @@
     "@vue/cli-plugin-babel": "~4.4.0",
     "@vue/cli-service": "~4.4.0",
     "element-ui": "^2.13.2",
+    "json-editor-vue": "^0.0.2",
     "sass": "^1.26.0",
     "sass-loader": "^9.0.0",
     "vue": "^2.6.11",

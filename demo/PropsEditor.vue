@@ -20,6 +20,22 @@
           <el-tag>支持自定义列表</el-tag>
         </el-card>
       </el-collapse-item>
+      <el-collapse-item>
+        <template slot="title">
+          <span class="title">【sortable】是否开启拖拉拽排序</span>
+          <el-tag>Boolean</el-tag>
+        </template>
+        <el-card>
+          <div slot="header">
+            <el-switch v-model="value.sortable"
+                       active-color="#13ce66"
+                       :active-value="true"
+                       :inactive-value="false">
+            </el-switch>
+          </div>
+          <el-tag type="success">默认值：true</el-tag>
+        </el-card>
+      </el-collapse-item>
       <el-collapse-item v-show="value.isTable">
         <template slot="title">
           <span class="title">【elTableProps】el-table属性</span>
@@ -27,9 +43,12 @@
         </template>
         <el-card>
           <div slot="header">
-            <el-input :value="JSON.stringify(value.elTableProps)"/>
+            <json-editor-vue v-model="value.elTableProps"/>
           </div>
-          <el-tag type="success">默认值：{border:true, fit:true, stripe:true, highlightCurrentRow:true,}</el-tag>
+          <json-editor-vue v-model="elTableProps__" :options="{
+            mode: 'view',
+            name: '默认值',
+          }"/>
         </el-card>
       </el-collapse-item>
       <el-collapse-item>
@@ -78,7 +97,7 @@
           </template>
           <el-card>
             <div slot="header">
-              <el-input :value="JSON.stringify(value.rowTemplate)"/>
+              <json-editor-vue v-if="typeof value.rowTemplate==='object'" v-model="value.rowTemplate"/>
             </div>
             <el-tag type="success">默认值：{}</el-tag>
           </el-card>
@@ -89,14 +108,23 @@
 </template>
 
 <script>
+import { JsonEditorVue } from 'json-editor-vue'
+
 export default {
   props: {
     value: Object
   },
+  components: { JsonEditorVue },
   data () {
     return {
       countType__: 'Number',
       rowTemplateType__: 'Object',
+      elTableProps__: {
+        border: true,
+        fit: true,
+        stripe: true,
+        highlightCurrentRow: true,
+      }
     }
   },
 }
@@ -113,13 +141,5 @@ h2 {
 
 .title {
   margin-right: 16px;
-}
-
-::v-deep .el-collapse-item__wrap {
-  overflow: unset;
-
-  .el-card {
-    overflow: unset;
-  }
 }
 </style>

@@ -1,5 +1,5 @@
 <template>
-  <div class="elastic-list">
+  <div class="elastic-list" v-if="show">
     <!--<div v-for="v of value">{{v}}</div>-->
     <template v-if="IsTable">
       <el-table :data="value__" v-bind="ElTableProps">
@@ -22,12 +22,14 @@
         </slot>
       </el-table>
 
-      <el-button v-if="Editable"
-                 icon="el-icon-plus"
-                 class="append-row-btn"
-                 @click="appendRow"
-                 v-show="!maxRow||value__.length<maxRow"
-      />
+      <span v-if="Editable"
+            @click="appendRow"
+            v-show="!maxRow||value__.length<maxRow"
+      >
+        <slot name="append-row-btn">
+          <el-button icon="el-icon-plus" class="append-row-btn"/>
+        </slot>
+      </span>
     </template>
 
     <template v-else>
@@ -54,7 +56,7 @@
 import 'animate.css'
 import Sortable from 'sortablejs'
 import cloneDeep from 'lodash/cloneDeep'
-import { isTable, elTableProps, editable, count, rowTemplate } from './config.ts'
+import { isTable, sortable, elTableProps, editable, count, rowTemplate } from './config.ts'
 import { v1 as uuidv1 } from 'uuid'
 
 export default {
@@ -80,6 +82,10 @@ export default {
       type: Boolean,
       default: undefined
     },
+    sortable: {
+      type: Boolean,
+      default: true
+    }
   },
   computed: {
     ElTableProps () {
@@ -89,7 +95,9 @@ export default {
         fit: true,
         stripe: true,
         highlightCurrentRow: true,
-        ...(this.elTableProps || elTableProps || {}),
+        ...(Object.getOwnPropertyNames(this.elTableProps || {}).length > 1 ? this.elTableProps :
+          elTableProps ||
+          {}),
       }
     },
     IsTable () {
@@ -97,28 +105,36 @@ export default {
         this.isTable :
         typeof isTable === 'boolean' ?
           isTable : true
-      this.$nextTick(() => {
-        const el = document.querySelector(IsTable ? '.elastic-list tbody' : '.elastic-list .list-wrapper')
-        Sortable.create(el, {
-          animation: 500,
-          onStart: () => {
-            this.sorting = true
-          },
-          onEnd: ({ newIndex, oldIndex }) => {
-            const copy = cloneDeep(this.value__)
-            copy.splice(newIndex, 0, copy.splice(oldIndex, 1)[0])
-            //fix: 视图不更新
-            //this.value__ = []
-            //this.$nextTick(() => {
-            this.value__ = copy
-            this.$nextTick(() => {
-              this.sorting = false
-            })
-            //})
-          }
+      if (this.sortable) {
+        this.$nextTick(() => {
+          const el = document.querySelector(IsTable ? '.elastic-list tbody' : '.elastic-list .list-wrapper')
+          this.sortablejs = Sortable.create(el, {
+            animation: 500,
+            onStart: () => {
+              this.sorting = true
+            },
+            onEnd: ({ newIndex, oldIndex }) => {
+              const copy = cloneDeep(this.value__)
+              copy.splice(newIndex, 0, copy.splice(oldIndex, 1)[0])
+              //fix: 视图不更新
+              //this.value__ = []
+              //this.$nextTick(() => {
+              this.value__ = copy
+              this.$nextTick(() => {
+                this.sorting = false
+              })
+              //})
+            }
+          })
         })
-      })
+      }
       return IsTable
+    },
+    Sortable () {
+      return typeof this.sortable === 'boolean' ?
+        this.sortable :
+        typeof sortable === 'boolean' ?
+          sortable : true
     },
     Editable () {
       return typeof this.editable === 'boolean' ?
@@ -127,7 +143,8 @@ export default {
           editable : true
     },
     RowTemplate () {
-      return this.rowTemplate || rowTemplate || {}
+      return Object.getOwnPropertyNames(this.rowTemplate || {}).length > 1 ? this.rowTemplate :
+        rowTemplate || {}
     },
     maxRow () {
       const globalCount = this.count || count
@@ -140,7 +157,7 @@ export default {
       if (globalCount instanceof Array) {
         return globalCount[0]
       }
-    }
+    },
   },
   created () {
     const unwatch = this.$watch('value', (newVal, oldVal) => {
@@ -164,6 +181,7 @@ export default {
       //uuid: 0,
       //weakMap: new weakMap(),
       rowKey: '__key',
+      sortablejs: null
     }
   },
   watch: {
@@ -179,6 +197,16 @@ export default {
         //}
       }
     },
+    sortable (newVal) {
+      if (this.sortablejs) {
+        this.sortablejs.option('disabled', !newVal)
+        //fix: 第二次之后禁用不起作用
+        this.show = false
+        this.$nextTick(() => {
+          this.show = true
+        })
+      }
+    }
   },
   /*updated () {
     this.dragTable()
