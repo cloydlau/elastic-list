@@ -1,7 +1,7 @@
 <template>
   <el-dialog visible :close-on-click-modal="false" :show-close="false" title="elastic-list">
-    <!--表格展示-->
-    <ElasticList v-model="value" v-bind="props" v-if="props.isTable">
+    <h2>表格形式：</h2>
+    <ElasticList v-model="value" v-bind="props">
       <el-table-column label="类型" prop="name"/>
       <!--自定义末尾的操作列-->
       <!--<template #operation-column="{showDelBtn,deleteRow}">
@@ -21,8 +21,8 @@
       <!--<button slot="append-row-btn">增加一行</button>-->
     </ElasticList>
 
-    <!--列表展示-->
-    <ElasticList v-model="value" v-bind="props" v-else>
+    <h2>列表形式：</h2>
+    <ElasticList v-model="value" v-bind="props">
       <template v-slot="{v,i,showDelBtn,deleteRow}">
         <div class="row">
           <i class="el-icon-circle-close"
@@ -40,8 +40,8 @@
 </template>
 
 <script>
-//import ElasticList from '../src/index' //dev
-import { ElasticList } from '../dist/elastic-list.umd' //prod
+import ElasticList from '../src/index' //dev
+//import { ElasticList } from '../dist/elastic-list.umd' //prod
 //import { ElasticList } from 'elastic-list' //todo
 import PropsEditor from './PropsEditor'
 
@@ -51,7 +51,6 @@ export default {
     return {
       value: Array.from(Array(3)).map((v, i) => ({ name: i })),
       props: {
-        isTable: true,
         sortable: true,
         editable: true,
         rowTemplate: () => ({

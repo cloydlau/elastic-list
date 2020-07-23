@@ -4,24 +4,6 @@
     <el-collapse>
       <el-collapse-item>
         <template slot="title">
-          <span class="title">【isTable】是否表格形式</span>
-          <el-tag>Boolean</el-tag>
-        </template>
-        <el-card>
-          <div slot="header">
-            <el-switch v-model="value.isTable"
-                       active-color="#13ce66"
-                       :active-value="true"
-                       :inactive-value="false">
-            </el-switch>
-          </div>
-          <el-tag type="success">默认值：true</el-tag>
-          <el-tag>表格采用的是element</el-tag>
-          <el-tag>支持自定义列表</el-tag>
-        </el-card>
-      </el-collapse-item>
-      <el-collapse-item>
-        <template slot="title">
           <span class="title">【sortable】是否开启拖拉拽排序</span>
           <el-tag>Boolean</el-tag>
         </template>
@@ -36,7 +18,7 @@
           <el-tag type="success">默认值：true</el-tag>
         </el-card>
       </el-collapse-item>
-      <el-collapse-item v-show="value.isTable">
+      <el-collapse-item>
         <template slot="title">
           <span class="title">【elTableProps】el-table属性</span>
           <el-tag>Object</el-tag>

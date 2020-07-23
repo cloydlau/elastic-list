@@ -15,7 +15,6 @@ import ElasticList from '../src/main.ts' //dev
 //import ElasticList from '../dist/elastic-list.umd' //prod
 //import ElasticList from 'elastic-list' //todo
 /*Vue.use(ElasticList, {
-  isTable: true,
   sortable: true,
   editable: false,
   count: [1, 4],

@@ -1,7 +1,7 @@
 <template>
   <div class="elastic-list" v-if="show">
     <!--<div v-for="v of value">{{v}}</div>-->
-    <template v-if="IsTable">
+    <template v-if="isTable">
       <el-table :data="value__" v-bind="ElTableProps">
         <slot/>
         <slot name="operation-column"
@@ -54,9 +54,8 @@
 
 <script>
 import 'animate.css'
-import Sortable from 'sortablejs'
 import cloneDeep from 'lodash/cloneDeep'
-import { isTable, sortable, elTableProps, editable, count, rowTemplate } from './config.ts'
+import { sortable, elTableProps, editable, count, rowTemplate } from './config.ts'
 import { v1 as uuidv1 } from 'uuid'
 
 export default {
@@ -78,10 +77,6 @@ export default {
       type: Boolean,
       default: undefined
     },
-    isTable: {
-      type: Boolean,
-      default: undefined
-    },
     sortable: {
       type: Boolean,
       default: true
@@ -100,35 +95,8 @@ export default {
           {}),
       }
     },
-    IsTable () {
-      const IsTable = typeof this.isTable === 'boolean' ?
-        this.isTable :
-        typeof isTable === 'boolean' ?
-          isTable : true
-      if (this.sortable) {
-        this.$nextTick(() => {
-          const el = document.querySelector(IsTable ? '.elastic-list tbody' : '.elastic-list .list-wrapper')
-          this.sortablejs = Sortable.create(el, {
-            animation: 500,
-            onStart: () => {
-              this.sorting = true
-            },
-            onEnd: ({ newIndex, oldIndex }) => {
-              const copy = cloneDeep(this.value__)
-              copy.splice(newIndex, 0, copy.splice(oldIndex, 1)[0])
-              //fix: 视图不更新
-              //this.value__ = []
-              //this.$nextTick(() => {
-              this.value__ = copy
-              this.$nextTick(() => {
-                this.sorting = false
-              })
-              //})
-            }
-          })
-        })
-      }
-      return IsTable
+    isTable () {
+      return this.$slots.default && this.$slots.default[0]?.tag.includes('ElTableColumn')
     },
     Sortable () {
       return typeof this.sortable === 'boolean' ?
@@ -173,6 +141,9 @@ export default {
       immediate: true
     })
   },
+  mounted () {
+    this.sort()
+  },
   data () {
     return {
       show: true,
@@ -198,14 +169,13 @@ export default {
       }
     },
     sortable (newVal) {
-      if (this.sortablejs) {
-        this.sortablejs.option('disabled', !newVal)
-        //fix: 第二次之后禁用不起作用
-        this.show = false
-        this.$nextTick(() => {
-          this.show = true
-        })
-      }
+      this.sort()
+      this.sortablejs.option('disabled', !newVal)
+      //fix: 第二次之后禁用不起作用
+      /*this.show = false
+      this.$nextTick(() => {
+        this.show = true
+      })*/
     }
   },
   /*updated () {
@@ -226,6 +196,30 @@ export default {
         })
       })
     },*/
+    async sort () {
+      if (!this.sortablejs) {
+        const Sortable = (await import('sortablejs')).default
+        const el = document.querySelector(this.isTable ? '.elastic-list tbody' : '.elastic-list .list-wrapper')
+        this.sortablejs = Sortable.create(el, {
+          animation: 500,
+          onStart: () => {
+            this.sorting = true
+          },
+          onEnd: ({ newIndex, oldIndex }) => {
+            const copy = cloneDeep(this.value__)
+            copy.splice(newIndex, 0, copy.splice(oldIndex, 1)[0])
+            //fix: 视图不更新
+            //this.value__ = []
+            //this.$nextTick(() => {
+            this.value__ = copy
+            this.$nextTick(() => {
+              this.sorting = false
+            })
+            //})
+          }
+        })
+      }
+    },
     appendRow () {
       this.value__.push({
         ...this.RowTemplate instanceof Function ? this.RowTemplate() : this.RowTemplate,

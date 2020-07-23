@@ -1,7 +1,6 @@
-let isTable, sortable, editable, count, rowTemplate, elTableProps
+let sortable, editable, count, rowTemplate, elTableProps
 
 export const init = (opts = {}) => {
-  isTable = opts.isTable
   sortable = opts.sortable
   elTableProps = opts.elTableProps
   editable = opts.editable
@@ -10,5 +9,5 @@ export const init = (opts = {}) => {
 }
 
 export {
-  isTable, sortable, elTableProps, editable, count, rowTemplate
+  sortable, elTableProps, editable, count, rowTemplate
 }
