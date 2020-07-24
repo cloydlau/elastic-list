@@ -196,9 +196,9 @@ export default {
         })
       })
     },*/
-    async sort () {
+    sort () {
       if (!this.sortablejs) {
-        const Sortable = (await import('sortablejs')).default
+        const Sortable = require('sortablejs').default //(await import('sortablejs')).default 在生产环境报错
         const el = document.querySelector(this.isTable ? '.elastic-list tbody' : '.elastic-list .list-wrapper')
         this.sortablejs = Sortable.create(el, {
           animation: 500,
