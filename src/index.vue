@@ -166,6 +166,10 @@ export default {
         }))
         //this.$emit('change', newVal)
         //}
+        //fix: 外层表单校验规则为blur时 无法触发
+        if (this.$parent?.$options?._componentTag === ('el-form-item') && this.$parent.rules?.trigger === 'blur') {
+          this.$parent.$emit('el.form.blur')
+        }
       }
     },
     sortable (newVal) {
