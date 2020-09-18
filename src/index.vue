@@ -35,8 +35,8 @@
     <template v-else>
       <transition-group class="list-wrapper"
                         :enter-active-class="sorting?'':'animate__animated animate__zoomIn'">
-        <div v-for="(v,i) of value__" :key="v[rowKey]">
-          <slot :v="v"
+        <div v-for="(v,i) of value" :key="value__[i][rowKey]">
+          <slot :v="(v.__nonObj||v.__nonObj===0)?v.__nonObj:v"
                 :i="i"
                 :showDelBtn="Editable&&!minRow||value__.length>minRow"
                 :deleteRow="deleteRow"
@@ -55,6 +55,7 @@
 <script>
 import 'animate.css'
 import cloneDeep from 'lodash/cloneDeep'
+import isPlainObject from 'lodash/isPlainObject'
 import { sortable, elTableProps, editable, count, rowTemplate } from './config.ts'
 import { v1 as uuidv1 } from 'uuid'
 
@@ -132,7 +133,7 @@ export default {
       if (newVal?.length > 0) {
         this.value__ = newVal.map(v => ({
           [this.rowKey]: uuidv1(),
-          ...v,
+          ...isPlainObject(v) ? v : { __nonObj: v },
         }))
         unwatch && unwatch() //仅初始化赋值一次 第一次触发时unwatch为空 所以需要判空
       }
@@ -162,7 +163,7 @@ export default {
         //if (!isEqualWith(newVal, this.value)) {
         this.$emit('change', cloneDeep(newVal).map(v => {
           delete v[this.rowKey]
-          return v
+          return (v.__nonObj || v.__nonObj === 0) ? v.__nonObj : v
         }))
         //this.$emit('change', newVal)
         //}

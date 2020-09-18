@@ -27,24 +27,24 @@
     "lib": "vue-cli-service build --target lib --name elastic-list src/main.ts"
   },
   "dependencies": {
-    "animate.css": "^4.1.0",
+    "animate.css": "^4.1.1",
     "core-js": "^3.6.0",
-    "lodash": "^4.17.19",
-    "sortablejs": "^1.10.2",
-    "uuid": "^8.2.0"
+    "lodash": "^4.17.20",
+    "sortablejs": "1.10.2",
+    "uuid": "^8.3.0"
   },
   "peerDependencies": {
     "element-ui": "^2.13.2",
-    "vue": "^2.6.11"
+    "vue": "^2.6.12"
   },
   "devDependencies": {
-    "@vue/cli-plugin-babel": "~4.4.0",
-    "@vue/cli-service": "~4.4.0",
+    "@vue/cli-plugin-babel": "~4.5.0",
+    "@vue/cli-service": "~4.5.0",
     "element-ui": "^2.13.2",
-    "json-editor-vue": "^0.0.2",
+    "json-editor-vue": "^0.0.3",
     "sass": "^1.26.0",
-    "sass-loader": "^9.0.0",
-    "vue": "^2.6.11",
-    "vue-template-compiler": "^2.6.11"
+    "sass-loader": "^10.0.0",
+    "vue": "^2.6.12",
+    "vue-template-compiler": "^2.6.12"
   }
 }

@@ -1,10 +1,10 @@
 <template>
   <el-dialog visible :close-on-click-modal="false" :show-close="false" title="elastic-list">
     <h2>表格形式：</h2>
-    <ElasticList v-model="value" v-bind="props">
+    <!--<ElasticList v-model="value" v-bind="props">
       <el-table-column label="类型" prop="name"/>
-      <!--自定义末尾的操作列-->
-      <!--<template #operation-column="{showDelBtn,deleteRow}">
+      &lt;!&ndash;自定义末尾的操作列&ndash;&gt;
+      &lt;!&ndash;<template #operation-column="{showDelBtn,deleteRow}">
         <el-table-column label="操作" align="center">
           <template slot-scope="scope">
             <el-button>其他按钮</el-button>
@@ -16,10 +16,10 @@
             />
           </template>
         </el-table-column>
-      </template>-->
-      <!--自定义增加行按钮-->
-      <!--<button slot="append-row-btn">增加一行</button>-->
-    </ElasticList>
+      </template>&ndash;&gt;
+      &lt;!&ndash;自定义增加行按钮&ndash;&gt;
+      &lt;!&ndash;<button slot="append-row-btn">增加一行</button>&ndash;&gt;
+    </ElasticList>-->
 
     <h2>列表形式：</h2>
     <ElasticList v-model="value" v-bind="props">
@@ -29,7 +29,7 @@
              @click="deleteRow(i)"
              v-show="showDelBtn"
           />
-          {{v}}
+          <el-input v-model="v"/>
         </div>
       </template>
       <el-button slot="append-row-btn">自定义增加行按钮</el-button>
@@ -40,16 +40,14 @@
 </template>
 
 <script>
-import ElasticList from '../src/index' //dev
-//import { ElasticList } from '../dist/elastic-list.umd' //prod
-//import { ElasticList } from 'elastic-list' //todo
+import ElasticList from '../src/index'
 import PropsEditor from './PropsEditor'
 
 export default {
   components: { PropsEditor, ElasticList },
   data () {
     return {
-      value: Array.from(Array(3)).map((v, i) => ({ name: i })),
+      value: Array.from(Array(3), (v, i) => i),
       props: {
         sortable: true,
         editable: true,
@@ -76,9 +74,10 @@ export default {
   i {
     position: absolute;
     font-size: 32px;
-    right: 16px;
-    top: 10px;
+    right: -16px;
+    top: -16px;
     cursor: pointer;
+    z-index: 1;
   }
 }
 </style>
