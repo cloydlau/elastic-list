@@ -87,9 +87,9 @@ props:
 | Attribute | Description | Way Of Configuration | Type | Accepted Values | Default |
 | --- | --- | --- | --- | --- | --- |
 | value / v-model | 双绑 | props | String | | |
-| sortable | 是否开启拖拉拽排序 | global，props | Boolean | | true |
 | elTableProps | el-table属性 | global，props | Object | *详见下方说明 | |
-| disabled | 是否禁用增加/删除row功能 | global，props | Boolean | | true |
+| sortable | 是否开启拖拉拽排序 | global，props | Boolean | | true |
+| disabled | 禁用模式下无法新增、删除、排序 | global，props | Boolean | | true |
 | count | 行数限制 | global，props | Number, Array | *详见下方说明 | undefined（不作限制） |
 | rowTemplate | 新增加row对应的对象模板 | global，props | Object, Function | | {} |
 

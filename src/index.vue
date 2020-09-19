@@ -5,7 +5,7 @@
       <el-table :data="value__" v-bind="ElTableProps">
         <slot/>
         <slot name="operation-column"
-              v-if="!Disabled&&editable"
+              v-if="!Disabled"
               :showDelBtn="!minRow||value__.length>minRow"
               :deleteRow="deleteRow"
         >
@@ -22,7 +22,7 @@
         </slot>
       </el-table>
 
-      <span v-if="!Disabled&&editable"
+      <span v-if="!Disabled"
             @click="appendRow"
             v-show="!maxRow||value__.length<maxRow"
       >
@@ -36,14 +36,14 @@
       <transition-group class="list-wrapper"
                         :enter-active-class="sorting?'':'animate__animated animate__zoomIn'">
         <div v-for="(v,i) of value" :key="value__[i][rowKey]">
-          <slot :v="(v.__nonObj||v.__nonObj===0)?v.__nonObj:v"
+          <slot :v="v.__nonObj!==undefined?v.__nonObj:v"
                 :i="i"
-                :showDelBtn="!Disabled&&editable&&!minRow||value__.length>minRow"
+                :showDelBtn="!Disabled&&!minRow||value__.length>minRow"
                 :deleteRow="deleteRow"
           />
         </div>
       </transition-group>
-      <span v-if="!Disabled&&editable"
+      <span v-if="!Disabled"
             @click="appendRow"
             v-show="!maxRow||value__.length<maxRow">
         <slot name="append-row-btn"/>
@@ -72,13 +72,8 @@ export default {
     count: {
       type: [Number, Array]
     },
-    rowTemplate: [Object, Function],
+    rowTemplate: {},
     elTableProps: Object,
-    // todo: deprecated
-    editable: {
-      type: Boolean,
-      default: true
-    },
     disabled: Boolean,
     sortable: {
       type: Boolean,
@@ -102,17 +97,23 @@ export default {
       return this.$slots.default && this.$slots.default[0]?.tag.includes('ElTableColumn')
     },
     Sortable () {
-      return typeof this.sortable === 'boolean' ?
-        this.sortable :
-        typeof sortable === 'boolean' ?
-          sortable : true
+      return this.Disabled ?
+        false :
+        typeof this.sortable === 'boolean' ?
+          this.sortable :
+          typeof sortable === 'boolean' ?
+            sortable : true
+
     },
     Disabled () {
       return this.disabled || disabled
     },
     RowTemplate () {
-      return Object.getOwnPropertyNames(this.rowTemplate || {}).length > 1 ? this.rowTemplate :
-        rowTemplate || {}
+      return this.rowTemplate === undefined ?
+        rowTemplate === undefined ?
+          this.isObjArr ? {} : ''
+          : rowTemplate
+        : this.rowTemplate
     },
     maxRow () {
       const globalCount = this.count || count
@@ -126,6 +127,9 @@ export default {
         return globalCount[0]
       }
     },
+    isObjArr () {
+      return this.value__[0].__nonObj === undefined
+    }
   },
   created () {
     const unwatch = this.$watch('value', (newVal, oldVal) => {
@@ -162,7 +166,7 @@ export default {
         //if (!isEqualWith(newVal, this.value)) {
         this.$emit('change', cloneDeep(newVal).map(v => {
           delete v[this.rowKey]
-          return (v.__nonObj || v.__nonObj === 0) ? v.__nonObj : v
+          return v.__nonObj !== undefined ? v.__nonObj : v
         }))
         //this.$emit('change', newVal)
         //}
@@ -172,7 +176,7 @@ export default {
         }
       }
     },
-    sortable (newVal) {
+    Sortable (newVal) {
       this.sort()
       this.sortablejs.option('disabled', !newVal)
       //fix: 第二次之后禁用不起作用
@@ -225,8 +229,9 @@ export default {
       }
     },
     appendRow () {
+      const template = this.RowTemplate instanceof Function ? this.RowTemplate() : this.RowTemplate
       this.value__.push({
-        ...this.RowTemplate instanceof Function ? this.RowTemplate() : this.RowTemplate,
+        ...this.isObjArr ? template : { __nonObj: template },
         [this.rowKey]: uuidv1()
       })
     },

@@ -1,7 +1,7 @@
 <template>
   <el-dialog visible :close-on-click-modal="false" :show-close="false" title="elastic-list">
     <h2>表格形式：</h2>
-    <ElasticList v-model="objectArray" v-bind="props">
+    <ElasticList v-model="objArray" v-bind="props" :row-template="objRowTemplate">
       <el-table-column label="类型" prop="name"/>
       <!--自定义末尾的操作列-->
       <!--<template #operation-column="{showDelBtn,deleteRow}">
@@ -22,14 +22,14 @@
     </ElasticList>
 
     <h2>列表形式：</h2>
-    <ElasticList v-model="numberArray" v-bind="props">
+    <ElasticList v-model="nonObjArray" v-bind="props">
       <template v-slot="{v,i,showDelBtn,deleteRow}">
         <div class="row">
           <i class="el-icon-circle-close"
              @click="deleteRow(i)"
              v-show="showDelBtn"
           />
-          <el-input v-model="numberArray[i]"/>
+          <el-input v-model="nonObjArray[i]"/>
         </div>
       </template>
       <el-button slot="append-row-btn">自定义增加行按钮</el-button>
@@ -47,14 +47,14 @@ export default {
   components: { PropsEditor, ElasticList },
   data () {
     return {
-      objectArray: Array.from(Array(3), (v, i) => ({ name: i })),
-      numberArray: Array.from(Array(3), (v, i) => i),
+      objArray: Array.from(Array(3), (v, i) => ({ name: i })),
+      nonObjArray: Array.from(Array(3), (v, i) => i),
+      objRowTemplate: () => ({
+        name: Math.random()
+      }),
       props: {
         sortable: true,
         disabled: false,
-        rowTemplate: () => ({
-          name: Math.random()
-        }),
         count: 5,
         elTableProps: {},
       },
