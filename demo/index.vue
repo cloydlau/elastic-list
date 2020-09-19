@@ -1,10 +1,10 @@
 <template>
   <el-dialog visible :close-on-click-modal="false" :show-close="false" title="elastic-list">
     <h2>表格形式：</h2>
-    <!--<ElasticList v-model="value" v-bind="props">
+    <ElasticList v-model="objectArray" v-bind="props">
       <el-table-column label="类型" prop="name"/>
-      &lt;!&ndash;自定义末尾的操作列&ndash;&gt;
-      &lt;!&ndash;<template #operation-column="{showDelBtn,deleteRow}">
+      <!--自定义末尾的操作列-->
+      <!--<template #operation-column="{showDelBtn,deleteRow}">
         <el-table-column label="操作" align="center">
           <template slot-scope="scope">
             <el-button>其他按钮</el-button>
@@ -16,20 +16,20 @@
             />
           </template>
         </el-table-column>
-      </template>&ndash;&gt;
-      &lt;!&ndash;自定义增加行按钮&ndash;&gt;
-      &lt;!&ndash;<button slot="append-row-btn">增加一行</button>&ndash;&gt;
-    </ElasticList>-->
+      </template>-->
+      <!--自定义增加行按钮-->
+      <!--<button slot="append-row-btn">增加一行</button>-->
+    </ElasticList>
 
     <h2>列表形式：</h2>
-    <ElasticList v-model="value" v-bind="props">
+    <ElasticList v-model="numberArray" v-bind="props">
       <template v-slot="{v,i,showDelBtn,deleteRow}">
         <div class="row">
           <i class="el-icon-circle-close"
              @click="deleteRow(i)"
              v-show="showDelBtn"
           />
-          <el-input v-model="v"/>
+          <el-input v-model="numberArray[i]"/>
         </div>
       </template>
       <el-button slot="append-row-btn">自定义增加行按钮</el-button>
@@ -47,10 +47,11 @@ export default {
   components: { PropsEditor, ElasticList },
   data () {
     return {
-      value: Array.from(Array(3), (v, i) => i),
+      objectArray: Array.from(Array(3), (v, i) => ({ name: i })),
+      numberArray: Array.from(Array(3), (v, i) => i),
       props: {
         sortable: true,
-        editable: true,
+        disabled: false,
         rowTemplate: () => ({
           name: Math.random()
         }),

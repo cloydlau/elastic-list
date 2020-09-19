@@ -5,7 +5,7 @@
       <el-table :data="value__" v-bind="ElTableProps">
         <slot/>
         <slot name="operation-column"
-              v-if="Editable"
+              v-if="!Disabled&&editable"
               :showDelBtn="!minRow||value__.length>minRow"
               :deleteRow="deleteRow"
         >
@@ -22,7 +22,7 @@
         </slot>
       </el-table>
 
-      <span v-if="Editable"
+      <span v-if="!Disabled&&editable"
             @click="appendRow"
             v-show="!maxRow||value__.length<maxRow"
       >
@@ -38,12 +38,12 @@
         <div v-for="(v,i) of value" :key="value__[i][rowKey]">
           <slot :v="(v.__nonObj||v.__nonObj===0)?v.__nonObj:v"
                 :i="i"
-                :showDelBtn="Editable&&!minRow||value__.length>minRow"
+                :showDelBtn="!Disabled&&editable&&!minRow||value__.length>minRow"
                 :deleteRow="deleteRow"
           />
         </div>
       </transition-group>
-      <span v-if="Editable"
+      <span v-if="!Disabled&&editable"
             @click="appendRow"
             v-show="!maxRow||value__.length<maxRow">
         <slot name="append-row-btn"/>
@@ -56,7 +56,7 @@
 import 'animate.css'
 import cloneDeep from 'lodash/cloneDeep'
 import isPlainObject from 'lodash/isPlainObject'
-import { sortable, elTableProps, editable, count, rowTemplate } from './config.ts'
+import { sortable, elTableProps, disabled, count, rowTemplate } from './config.ts'
 import { v1 as uuidv1 } from 'uuid'
 
 export default {
@@ -74,10 +74,12 @@ export default {
     },
     rowTemplate: [Object, Function],
     elTableProps: Object,
+    // todo: deprecated
     editable: {
       type: Boolean,
-      default: undefined
+      default: true
     },
+    disabled: Boolean,
     sortable: {
       type: Boolean,
       default: true
@@ -105,11 +107,8 @@ export default {
         typeof sortable === 'boolean' ?
           sortable : true
     },
-    Editable () {
-      return typeof this.editable === 'boolean' ?
-        this.editable :
-        typeof editable === 'boolean' ?
-          editable : true
+    Disabled () {
+      return this.disabled || disabled
     },
     RowTemplate () {
       return Object.getOwnPropertyNames(this.rowTemplate || {}).length > 1 ? this.rowTemplate :
