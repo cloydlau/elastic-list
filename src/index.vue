@@ -229,7 +229,7 @@ export default {
       }
     },
     appendRow () {
-      const template = this.RowTemplate instanceof Function ? this.RowTemplate() : this.RowTemplate
+      const template = this.RowTemplate instanceof Function ? this.RowTemplate(this.value__.length + 1) : this.RowTemplate
       this.value__.push({
         ...this.isObjArr ? template : { __nonObj: template },
         [this.rowKey]: uuidv1()

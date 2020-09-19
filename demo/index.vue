@@ -22,7 +22,7 @@
     </ElasticList>
 
     <h2>列表形式：</h2>
-    <ElasticList v-model="nonObjArray" v-bind="props">
+    <ElasticList v-model="nonObjArray" v-bind="props" :row-template="nonObjRowTemplate">
       <template v-slot="{v,i,showDelBtn,deleteRow}">
         <div class="row">
           <i class="el-icon-circle-close"
@@ -52,6 +52,7 @@ export default {
       objRowTemplate: () => ({
         name: Math.random()
       }),
+      nonObjRowTemplate: i => `第 ${i} 行`,
       props: {
         sortable: true,
         disabled: false,
