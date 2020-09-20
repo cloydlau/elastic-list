@@ -22,7 +22,7 @@
     </ElasticList>
 
     <h2>列表形式：</h2>
-    <ElasticList v-model="nonObjArray" v-bind="props" :row-template="nonObjRowTemplate">
+    <ElasticList v-model="nonObjArray" v-bind="props" :row-template="nonObjRowTemplate" v-if="!loading">
       <template v-slot="{v,i,showDelBtn,deleteRow}">
         <div class="row">
           <i class="el-icon-circle-close"
@@ -48,7 +48,7 @@ export default {
   data () {
     return {
       objArray: Array.from(Array(3), (v, i) => ({ name: i })),
-      nonObjArray: Array.from(Array(3), (v, i) => i),
+      nonObjArray: [''],
       objRowTemplate: () => ({
         name: Math.random()
       }),
@@ -59,8 +59,15 @@ export default {
         count: 5,
         elTableProps: {},
       },
+      loading: true
     }
   },
+  created () {
+    setTimeout(() => {
+      this.nonObjArray = Array.from(Array(3), (v, i) => i)
+      this.loading = false
+    }, 3000)
+  }
 }
 </script>
 

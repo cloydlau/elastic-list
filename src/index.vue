@@ -6,7 +6,7 @@
         <slot/>
         <slot name="operation-column"
               v-if="!Disabled"
-              :showDelBtn="!minRow||value__.length>minRow"
+              :showDelBtn="canDel"
               :deleteRow="deleteRow"
         >
           <el-table-column label="操作" align="center">
@@ -15,17 +15,14 @@
                          circle
                          icon="el-icon-delete"
                          @click="()=>{deleteRow(scope.$index)}"
-                         v-show="!minRow||value__.length>minRow"
+                         v-show="canDel"
               />
             </template>
           </el-table-column>
         </slot>
       </el-table>
 
-      <span v-if="!Disabled"
-            @click="appendRow"
-            v-show="!maxRow||value__.length<maxRow"
-      >
+      <span @click="appendRow" v-show="canAppend">
         <slot name="append-row-btn">
           <el-button icon="el-icon-plus" class="append-row-btn"/>
         </slot>
@@ -36,16 +33,16 @@
       <transition-group class="list-wrapper"
                         :enter-active-class="sorting?'':'animate__animated animate__zoomIn'">
         <div v-for="(v,i) of value" :key="value__[i][rowKey]">
-          <slot :v="v.__nonObj!==undefined?v.__nonObj:v"
+          <slot :v="v"
                 :i="i"
-                :showDelBtn="!Disabled&&!minRow||value__.length>minRow"
+                :showDelBtn="canDel"
                 :deleteRow="deleteRow"
           />
         </div>
       </transition-group>
       <span v-if="!Disabled"
             @click="appendRow"
-            v-show="!maxRow||value__.length<maxRow">
+            v-show="!maxRow||value.length<maxRow">
         <slot name="append-row-btn"/>
       </span>
     </template>
@@ -61,10 +58,6 @@ import { v1 as uuidv1 } from 'uuid'
 
 export default {
   name: 'ElasticList',
-  model: {
-    prop: 'value',
-    event: 'change'
-  },
   props: {
     value: {
       validator: value => ['Null', 'Array'].includes(({}).toString.call(value).slice(8, -1)),
@@ -81,6 +74,12 @@ export default {
     }
   },
   computed: {
+    canAppend () {
+      return !this.Disabled && (!this.maxRow || this.value.length < this.maxRow)
+    },
+    canDel () {
+      return !this.Disabled && (!this.minRow || this.value.length > this.minRow)
+    },
     ElTableProps () {
       return {
         rowKey: this.rowKey,
@@ -128,22 +127,32 @@ export default {
       }
     },
     isObjArr () {
-      return this.value__[0].__nonObj === undefined
+      return this.value && isPlainObject(this.value[0])
     }
   },
   created () {
-    const unwatch = this.$watch('value', (newVal, oldVal) => {
-      if (newVal?.length > 0) {
-        this.value__ = newVal.map(v => ({
-          [this.rowKey]: uuidv1(),
-          ...isPlainObject(v) ? v : { __nonObj: v },
-        }))
-        unwatch && unwatch() //仅初始化赋值一次 第一次触发时unwatch为空 所以需要判空
+    /*const unwatch = this.$watch('value', newVal => {
+      if (this.synchronizing) {
+        this.synchronizing = false
+      } else {
+        if (this.value) {
+          this.value__ = this.value.map(v => ({
+            [this.rowKey]: uuidv1(),
+            ...isPlainObject(v) && v,
+          }))
+        }
       }
     }, {
-      deep: true,
-      immediate: true
-    })
+      immediate: true,
+      deep: true
+    })*/
+
+    if (this.value) {
+      this.value__ = this.value.map(v => ({
+        [this.rowKey]: uuidv1(),
+        ...isPlainObject(v) && v,
+      }))
+    }
   },
   mounted () {
     this.sort()
@@ -156,24 +165,25 @@ export default {
       //uuid: 0,
       //weakMap: new weakMap(),
       rowKey: '__key',
-      sortablejs: null
+      sortablejs: null,
+      synchronizing: false,
     }
   },
   watch: {
     value__: {
       deep: true,
       handler (newVal, oldVal) {
+        //if (this.synchronizing) {
+        //  this.synchronizing = false
+        //} else {
         //if (!isEqualWith(newVal, this.value)) {
-        this.$emit('change', cloneDeep(newVal).map(v => {
+        this.isTable && this.sync(cloneDeep(newVal).map(v => {
           delete v[this.rowKey]
-          return v.__nonObj !== undefined ? v.__nonObj : v
+          return v
         }))
-        //this.$emit('change', newVal)
+        //this.$emit('input', newVal)
         //}
-        //fix: 用于el表单中 且校验触发方式为blur时 没有生效
-        if (this.$parent?.$options?._componentTag === ('el-form-item') && this.$parent.rules?.trigger === 'blur') {
-          this.$parent.$emit('el.form.blur')
-        }
+        //}
       }
     },
     Sortable (newVal) {
@@ -190,6 +200,14 @@ export default {
     this.dragTable()
   },*/
   methods: {
+    sync (value) {
+      this.synchronizing = true
+      this.$emit('input', value)
+      // fixing: 用于el表单中 且校验触发方式为blur时 没有生效
+      if (this.$parent?.$options?._componentTag === ('el-form-item') && this.$parent.rules?.trigger === 'blur') {
+        this.$parent.$emit('el.form.blur')
+      }
+    },
     /*dragTable () {
       this.$nextTick(() => {
         const el = document.querySelector('.elastic-list .el-table__body-wrapper table')
@@ -220,6 +238,13 @@ export default {
             //this.value__ = []
             //this.$nextTick(() => {
             this.value__ = copy
+
+            if (!this.isTable) {
+              const value = cloneDeep(this.value)
+              value.splice(newIndex, 0, value.splice(oldIndex, 1)[0])
+              this.sync(value)
+            }
+
             this.$nextTick(() => {
               this.sorting = false
             })
@@ -231,12 +256,23 @@ export default {
     appendRow () {
       const template = this.RowTemplate instanceof Function ? this.RowTemplate(this.value__.length + 1) : this.RowTemplate
       this.value__.push({
-        ...this.isObjArr ? template : { __nonObj: template },
-        [this.rowKey]: uuidv1()
+        [this.rowKey]: uuidv1(),
+        ...this.isTable && template
       })
+      if (!this.isTable) {
+        this.sync([
+          ...cloneDeep(this.value),
+          template
+        ])
+      }
     },
     deleteRow (index) {
       this.value__.splice(index, 1)
+      if (!this.isTable) {
+        const value = cloneDeep(this.value)
+        value.splice(index, 1)
+        this.sync(value)
+      }
     },
     /*getUuid (obj) {
       if (!this.weakMap.has(obj)) {
