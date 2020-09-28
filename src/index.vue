@@ -58,6 +58,11 @@ import { v1 as uuidv1 } from 'uuid'
 
 export default {
   name: 'ElasticList',
+  inject: {
+    elForm: {
+      default: ''
+    },
+  },
   props: {
     value: {
       validator: value => ['Null', 'Array'].includes(({}).toString.call(value).slice(8, -1)),
@@ -105,7 +110,7 @@ export default {
 
     },
     Disabled () {
-      return this.disabled || disabled
+      return this.disabled || disabled || (this.elForm || {}).disabled
     },
     RowTemplate () {
       return this.rowTemplate === undefined ?
