@@ -1,19 +1,26 @@
 import ElasticList from './index.vue'
-import {init} from './config.ts'
+import { init } from './config'
 
-const install = (Vue, opts = {}) => {
-    if (install.installed) {
-        return
-    }
-    init(opts)
-    Vue.component(ElasticList.name, ElasticList)
+interface installInterface {
+  installed?: boolean
+
+  (Vue: any, opts?: object): void
+}
+
+const install: installInterface = (Vue, opts = {}) => {
+  if (install.installed) {
+    return
+  }
+  init(opts)
+  Vue.component(ElasticList.name, ElasticList)
+  install.installed = true
 }
 
 if (typeof window !== 'undefined' && window.Vue) {
-    install(window.Vue)
+  install(window.Vue)
 }
 
 export default {
-    install,
-    ElasticList
+  install,
+  ElasticList
 }

@@ -2,26 +2,27 @@
 
 ![preview](./preview.gif)
 
-<br/><br/>
+<br/>
 
 ### Features
 
 - √ v-model双绑
 - √ 表格展示、列表展示两种展示方式
-- √ 支持值类型数组
+- √ 数组的元素类型不局限于对象（[{},{}]） 同样支持值类型变量（[1,2]）
+- √ 支持将数组元素绑定到输入框的情况
 - √ 自定义列表 slot传入
-- √ 对行进行增加、删除、拖拉拽排序
+- √ 对行进行新增、删除、拖拉拽排序
 - √ 对行的数量上限、下限进行限制
-- √ 自定义新增对象模板
-- √ 支持element-ui中el-form的全局disabled
+- √ 自定义新增变量的模板
+- √ 适配element-ui的el-form组件 支持el-form的全局disabled
 - √ 全局安装/单独引入 通用参数支持全局配置
 
-<br/><br/>
+<br/>
 
 ### Installation
 ![NPM](https://nodei.co/npm/elastic-list.png)
 ``` bash
-$ yarn add pic-viewer
+$ yarn add elastic-list
 ```
 
 **Dependencies**：vue element-ui
@@ -39,7 +40,7 @@ import ElasticList from 'elastic-list'
 Vue.use(ElasticList)
 ```
 
-<br/><br/>
+<br/>
 
 ### Quick Start
 
@@ -92,8 +93,10 @@ props:
 | elTableProps | el-table属性 | global，props | Object | *详见下方说明 | |
 | sortable | 是否开启拖拉拽排序 | global，props | Boolean | | true |
 | disabled | 禁用模式下无法新增、删除、排序 | global，props | Boolean | | true |
-| count | 行数限制 | global，props | Number, Array | *详见下方说明 | undefined（不作限制） |
+| count | 行数限制 | global，props | Number, Array | *详见下方说明 | |
 | rowTemplate | 新增加row对应的模板 | global，props | Object, Function | *详见下方说明 | {} / '' |
+| watchValue | 是否监听value的变化 | global，props | Boolean | *详见下方说明 | true |
+| animate | 添加行时的动画名称 | global，props | String | https://animate.style 如不需要动画 传'' | zoomIn |
 
 elTableProps:
 
@@ -146,8 +149,20 @@ Vue.use(ElasticList, {
 })
 ```
 
-<br/><br/>
+<br/>
 
-### Notice
+watchValue:
 
-- 如果是初始值是异步获取 请使用v-if来确保在值获取到位后再渲染组件
+因为除了手动的增减、排序会改变value以外 value还有被编码式设值的情况 如没有可以将watchValue设为false以提升性能
+
+有一种情况必须取消监听：当value的值被绑定到输入框之类的可以在界面上直接编辑的地方 此时每次输入都会触发重绘 导致无法连续输入
+
+取消对value的监听后 如果你的value是异步获取的 在获取到数据后再加载组件：
+
+```html
+<ElasticList v-if="!loading" :watchValue="false"/>
+```
+
+```js
+axios.post().finally(() => { this.loading = false })
+```

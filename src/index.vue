@@ -1,5 +1,5 @@
 <template>
-  <div class="elastic-list" v-if="show">
+  <div :id="id" class="elastic-list" v-if="show">
     <!--<div v-for="v of value">{{v}}</div>-->
     <template v-if="isTable">
       <el-table :data="value__" v-bind="ElTableProps">
@@ -31,8 +31,8 @@
 
     <template v-else>
       <transition-group class="list-wrapper"
-                        :enter-active-class="sorting?'':'animate__animated animate__zoomIn'">
-        <div v-for="(v,i) of value" :key="value__[i][rowKey]">
+                        :enter-active-class="Animate&&adding?`animate__animated animate__${Animate}`:''">
+        <div v-for="(v,i) of value__" :key="value__[i][rowKey]">
           <slot :v="v"
                 :i="i"
                 :showDelBtn="canDel"
@@ -42,7 +42,7 @@
       </transition-group>
       <span v-if="!Disabled"
             @click="appendRow"
-            v-show="!maxRow||value.length<maxRow">
+            v-show="!maxRow||value__.length<maxRow">
         <slot name="append-row-btn"/>
       </span>
     </template>
@@ -51,10 +51,26 @@
 
 <script>
 import 'animate.css'
-import cloneDeep from 'lodash/cloneDeep'
-import isPlainObject from 'lodash/isPlainObject'
-import { sortable, elTableProps, disabled, count, rowTemplate } from './config.ts'
-import { v1 as uuidv1 } from 'uuid'
+import { cloneDeep, isPlainObject } from 'lodash'
+import uuidv1 from 'uuid/dist/esm-browser/v1'
+import { sortable, elTableProps, disabled, count, rowTemplate, watchValue, animate } from './config'
+import { typeOf } from 'plain-kit'
+
+/**
+ * 参数有全局参数、实例参数和默认值之分 取哪个取决于用户传了哪个 此时有两个疑问：
+ *   1. 怎么判断用户传没传？ —— 以该参数是否全等于undefined作为标识
+ *   2. 如果传了多个，权重顺序是怎样的？ —— 全局＞实例＞默认
+ *
+ * @param {any} globalProp - 全局参数
+ * @param {any} prop - 实例参数
+ * @param {any} defaultValue - 默认值
+ * @return {any} 最终
+ */
+function getFinalProp (globalProp, prop, defaultValue) {
+  return prop !== undefined ? prop :
+    globalProp !== undefined ? globalProp :
+      defaultValue
+}
 
 export default {
   name: 'ElasticList',
@@ -65,25 +81,34 @@ export default {
   },
   props: {
     value: {
-      validator: value => ['Null', 'Array'].includes(({}).toString.call(value).slice(8, -1)),
+      validator: value => ['Null', 'Array'].includes(typeOf(value)),
     },
     count: {
       type: [Number, Array]
     },
     rowTemplate: {},
     elTableProps: Object,
-    disabled: Boolean,
+    disabled: {
+      // 不能用type 因为type为Boolean时 如果用户没传 默认值为false而不是undefined 会影响getFinalProp的判断
+      validator: value => ['Boolean'].includes(typeOf(value)),
+    },
     sortable: {
-      type: Boolean,
-      default: true
-    }
+      validator: value => ['Boolean'].includes(typeOf(value)),
+    },
+    watchValue: {
+      validator: value => ['Boolean'].includes(typeOf(value)),
+    },
+    animate: String
   },
   computed: {
+    Animate () {
+      return getFinalProp(animate, this.animate, 'zoomIn')
+    },
     canAppend () {
-      return !this.Disabled && (!this.maxRow || this.value.length < this.maxRow)
+      return !this.Disabled && (!this.maxRow || this.value?.length < this.maxRow)
     },
     canDel () {
-      return !this.Disabled && (!this.minRow || this.value.length > this.minRow)
+      return !this.Disabled && (!this.minRow || this.value?.length > this.minRow)
     },
     ElTableProps () {
       return {
@@ -101,23 +126,14 @@ export default {
       return this.$slots.default && this.$slots.default[0]?.tag.includes('ElTableColumn')
     },
     Sortable () {
-      return this.Disabled ?
-        false :
-        typeof this.sortable === 'boolean' ?
-          this.sortable :
-          typeof sortable === 'boolean' ?
-            sortable : true
-
+      return this.Disabled ? false :
+        getFinalProp(sortable, this.sortable, true)
     },
     Disabled () {
-      return this.disabled || disabled || (this.elForm || {}).disabled
+      return getFinalProp(disabled, this.disabled, this.elForm?.disabled)
     },
     RowTemplate () {
-      return this.rowTemplate === undefined ?
-        rowTemplate === undefined ?
-          this.isObjArr ? {} : ''
-          : rowTemplate
-        : this.rowTemplate
+      return getFinalProp(rowTemplate, this.rowTemplate, this.isObjArr ? {} : '')
     },
     maxRow () {
       const globalCount = this.count || count
@@ -135,33 +151,6 @@ export default {
       return this.value && isPlainObject(this.value[0])
     }
   },
-  created () {
-    /*const unwatch = this.$watch('value', newVal => {
-      if (this.synchronizing) {
-        this.synchronizing = false
-      } else {
-        if (this.value) {
-          this.value__ = this.value.map(v => ({
-            [this.rowKey]: uuidv1(),
-            ...isPlainObject(v) && v,
-          }))
-        }
-      }
-    }, {
-      immediate: true,
-      deep: true
-    })*/
-
-    if (this.value) {
-      this.value__ = this.value.map(v => ({
-        [this.rowKey]: uuidv1(),
-        ...isPlainObject(v) && v,
-      }))
-    }
-  },
-  mounted () {
-    this.sort()
-  },
   data () {
     return {
       show: true,
@@ -172,6 +161,9 @@ export default {
       rowKey: '__key',
       sortablejs: null,
       synchronizing: false,
+      adding: false,
+      unWatchValue: null,
+      id: 'elastic-list-' + uuidv1()
     }
   },
   watch: {
@@ -189,16 +181,47 @@ export default {
         //this.$emit('input', newVal)
         //}
         //}
+      },
+    },
+    Sortable: {
+      immediate: true,
+      handler (newVal) {
+        if (this.sortablejs) {
+          this.sortablejs.option('disabled', !newVal)
+        } else {
+          this.$nextTick(this.sort)
+        }
+        //fix: 第二次之后禁用不起作用
+        /*this.show = false
+        this.$nextTick(() => {
+          this.show = true
+        })*/
       }
     },
-    Sortable (newVal) {
-      this.sort()
-      this.sortablejs.option('disabled', !newVal)
-      //fix: 第二次之后禁用不起作用
-      /*this.show = false
-      this.$nextTick(() => {
-        this.show = true
-      })*/
+    watchValue: {
+      immediate: true,
+      handler (newVal) {
+        const unWatchValue = this.$watch('value', newVal => {
+          // 内部同步
+          if (this.synchronizing) {
+            this.synchronizing = false
+          }
+          // 外部设值
+          else if (newVal) {
+            this.value__ = newVal.map(v => ({
+              [this.rowKey]: uuidv1(),
+              ...isPlainObject(v) && v
+            }))
+          }
+        }, {
+          immediate: true,
+          deep: true
+        })
+
+        if (!getFinalProp(watchValue, newVal, true)) {
+          unWatchValue()
+        }
+      }
     }
   },
   /*updated () {
@@ -228,9 +251,9 @@ export default {
       })
     },*/
     sort () {
-      if (this.sortable && !this.sortablejs) {
+      if (this.Sortable) {
         const Sortable = require('sortablejs').default //(await import('sortablejs')).default 在生产环境报错
-        const el = document.querySelector(this.isTable ? '.elastic-list tbody' : '.elastic-list .list-wrapper')
+        const el = document.querySelector('#' + this.id + (this.isTable ? ' tbody' : ' .list-wrapper'))
         this.sortablejs = Sortable.create(el, {
           animation: 500,
           onStart: () => {
@@ -259,6 +282,7 @@ export default {
       }
     },
     appendRow () {
+      this.adding = true
       const template = this.RowTemplate instanceof Function ? this.RowTemplate(this.value__.length + 1) : this.RowTemplate
       this.value__.push({
         [this.rowKey]: uuidv1(),
@@ -270,6 +294,9 @@ export default {
           template
         ])
       }
+      this.$nextTick(() => {
+        this.adding = false
+      })
     },
     deleteRow (index) {
       this.value__.splice(index, 1)

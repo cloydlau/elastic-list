@@ -25,5 +25,5 @@ module.exports = {
       libraryExport: 'default'
     },
     externals
-  }
+  },
 }

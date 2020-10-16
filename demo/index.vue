@@ -1,92 +1,44 @@
 <template>
-  <el-dialog visible :close-on-click-modal="false" :show-close="false" title="elastic-list">
-    <h2>表格形式：</h2>
-    <ElasticList v-model="objArray" v-bind="props" :row-template="objRowTemplate">
-      <el-table-column label="类型" prop="name"/>
-      <!--自定义末尾的操作列-->
-      <!--<template #operation-column="{showDelBtn,deleteRow}">
-        <el-table-column label="操作" align="center">
-          <template slot-scope="scope">
-            <el-button>其他按钮</el-button>
-            <el-button type="danger"
-                       circle
-                       icon="el-icon-delete"
-                       @click="()=>{deleteRow(scope.$index)}"
-                       v-show="showDelBtn"
-            />
-          </template>
-        </el-table-column>
-      </template>-->
-      <!--自定义增加行按钮-->
-      <!--<button slot="append-row-btn">增加一行</button>-->
-    </ElasticList>
+  <el-dialog visible :close-on-click-modal="false" :show-close="false" title="ElasticList">
+    <el-tabs type="border-card">
+      <el-tab-pane label="表格形式">
+        <ForTable :props="props"/>
+      </el-tab-pane>
+      <el-tab-pane label="列表形式">
+        <ForList :props="props"/>
+      </el-tab-pane>
+    </el-tabs>
 
-    <h2>列表形式：</h2>
-    <ElasticList v-model="nonObjArray" v-bind="props" :row-template="nonObjRowTemplate" v-if="!loading">
-      <template v-slot="{v,i,showDelBtn,deleteRow}">
-        <div class="row">
-          <i class="el-icon-circle-close"
-             @click="deleteRow(i)"
-             v-show="showDelBtn"
-          />
-          <el-input v-model="nonObjArray[i]"/>
-        </div>
-      </template>
-      <el-button slot="append-row-btn">自定义增加行按钮</el-button>
-    </ElasticList>
+    <br/><br/><br/>
 
     <PropsEditor v-model="props"/>
   </el-dialog>
 </template>
 
 <script>
-import ElasticList from '../src/index'
+import ForTable from './ForTable'
+import ForList from './ForList'
 import PropsEditor from './PropsEditor'
 
 export default {
-  components: { PropsEditor, ElasticList },
+  components: { ForTable, ForList, PropsEditor },
   data () {
     return {
-      objArray: Array.from(Array(3), (v, i) => ({ name: i })),
-      nonObjArray: [''],
-      objRowTemplate: () => ({
-        name: Math.random()
-      }),
-      nonObjRowTemplate: i => `第 ${i} 行`,
       props: {
+        animate: undefined,
         sortable: true,
         disabled: false,
-        count: 5,
+        count: [1, 5],
         elTableProps: {},
+        watchValue: true
       },
-      loading: true
     }
   },
-  created () {
-    setTimeout(() => {
-      this.nonObjArray = Array.from(Array(3), (v, i) => i)
-      this.loading = false
-    }, 3000)
-  }
 }
 </script>
 
 <style lang="scss" scoped>
-.row {
-  border: 1px solid lightgrey;
-  border-radius: 3px;
-  margin-bottom: 16px;
-  padding: 16px;
-  position: relative;
-  box-shadow: 0 2px 4px rgba(0, 0, 0, .12), 0 0 6px rgba(0, 0, 0, .04);
-
-  i {
-    position: absolute;
-    font-size: 32px;
-    right: -16px;
-    top: -16px;
-    cursor: pointer;
-    z-index: 1;
-  }
+::v-deep .el-dialog {
+  min-width: 600px;
 }
 </style>

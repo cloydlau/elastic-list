@@ -1,16 +1,25 @@
 <template>
-  <div style="margin-bottom: 200px;">
+  <div>
     <h2>props</h2>
 
     <el-form>
+      <el-form-item label="elTableProps">
+        <json-editor-vue v-model="value.elTableProps"/>
+      </el-form-item>
+      <el-form-item label="animate">
+        <el-input v-model="value.animate" clearable/>
+      </el-form-item>
+      <el-form-item label="watchValue">
+        <el-switch v-model="value.watchValue"
+                   :active-value="true"
+                   :inactive-value="false">
+        </el-switch>
+      </el-form-item>
       <el-form-item label="sortable">
         <el-switch v-model="value.sortable"
                    :active-value="true"
                    :inactive-value="false">
         </el-switch>
-      </el-form-item>
-      <el-form-item label="elTableProps">
-        <json-editor-vue v-model="value.elTableProps"/>
       </el-form-item>
       <el-form-item label="disabled">
         <el-switch v-model="value.disabled"
@@ -64,10 +73,6 @@ export default {
 </script>
 
 <style lang="scss" scoped>
-h2 {
-  margin-top: 50px;
-}
-
 .el-tag ~ .el-tag {
   margin-left: 16px;
 }
