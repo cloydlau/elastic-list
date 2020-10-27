@@ -95,7 +95,7 @@ props:
 | count | 行数限制 | global，props | Number, Array | *详见下方说明 | |
 | rowTemplate | 新增加row对应的模板 | global，props | Object, Function | *详见下方说明 | {} / '' |
 | watchValue | 是否监听value的变化 | global，props | Boolean | *详见下方说明 | true |
-| animate | 添加行时的动画名称 | global，props | String | https://animate.style 如不需要动画 传'' | zoomIn |
+| animate | 添加行时的动画名称（列表形式） | global，props | String | https://animate.style 如不需要动画 传'' | zoomIn |
 
 elTableProps:
 
