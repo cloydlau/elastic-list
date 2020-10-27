@@ -91,7 +91,7 @@ props:
 | value / v-model | 双绑 | props | String | | |
 | elTableProps | el-table属性 | global，props | Object | *详见下方说明 | |
 | sortable | 是否开启拖拉拽排序 | global，props | Boolean | | true |
-| disabled | 禁用模式下无法新增、删除、排序 | global，props | Boolean | | true |
+| disabled | 禁用模式下无法新增、删除、排序 | global，props | Boolean | | false |
 | count | 行数限制 | global，props | Number, Array | *详见下方说明 | |
 | rowTemplate | 新增加row对应的模板 | global，props | Object, Function | *详见下方说明 | {} / '' |
 | watchValue | 是否监听value的变化 | global，props | Boolean | *详见下方说明 | true |
