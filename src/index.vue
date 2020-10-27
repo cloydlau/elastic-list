@@ -33,10 +33,12 @@
       <transition-group class="list-wrapper"
                         :enter-active-class="Animate&&adding?`animate__animated animate__${Animate}`:''">
         <div v-for="(v,i) of value__" :key="value__[i][rowKey]">
-          <slot :v="v"
-                :i="i"
-                :showDelBtn="canDel"
-                :deleteRow="deleteRow"
+          <slot
+            :i="i"
+            :v="v"
+            :item="v"
+            :showDelBtn="canDel"
+            :deleteRow="deleteRow"
           />
         </div>
       </transition-group>

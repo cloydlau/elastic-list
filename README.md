@@ -13,8 +13,13 @@
 - √ 对行进行新增、删除、拖拉拽排序
 - √ 对行的数量上限、下限进行限制
 - √ 自定义新增变量的模板
-- √ 适配element-ui的el-form组件 支持el-form的全局disabled
 - √ 全局安装/单独引入 通用参数支持全局配置
+
+element-ui集成说明：
+
+- element-ui是以外置依赖的方式引入的 所以不必担心代码体积和版本不一致等问题
+- 集成风格是非侵入式的 支持el-table的所有参数（且可全局配置） el-table-column则是以slot形式传入
+- 适配element-ui的el-form组件 支持el-form的全局disabled
 
 <br/>
 
@@ -46,24 +51,37 @@ Vue.use(ElasticList)
 表格形式：
 
 ```html
+<ElasticList v-model="value" :elTableProps="{}">
+  <el-table-column label="姓名" prop="name"/>
+  <el-table-column label="年龄" prop="age"/>
+</ElasticList>
+```
+
+自定义操作列和添加按钮：
+
+```html
 <ElasticList v-model="value">
-  <el-table-column label="类型" prop="name"/>
+  <el-table-column label="姓名" prop="name"/>
+  <el-table-column label="年龄" prop="age"/>
+
   <!--自定义末尾的操作列-->
-  <!--<template #operation-column="{showDelBtn,deleteRow}">
+  <template #operation-column="{showDelBtn,deleteRow}">
     <el-table-column label="操作" align="center">
       <template slot-scope="scope">
         <el-button>其他按钮</el-button>
-        <el-button type="danger"
-                   circle
-                   icon="el-icon-delete"
-                   @click="()=>{deleteRow(scope.$index)}"
-                   v-show="showDelBtn"
+        <el-button 
+          type="danger"
+          circle
+          icon="el-icon-delete"
+          @click="()=>{deleteRow(scope.$index)}"
+          v-show="showDelBtn"
         />
       </template>
     </el-table-column>
-  </template>-->
+  </template>
+
   <!--自定义增加行按钮-->
-  <!--<button slot="append-row-btn">增加一行</button>-->
+  <button slot="append-row-btn">增加一行</button>
 </ElasticList>
 ```
 
@@ -71,31 +89,43 @@ Vue.use(ElasticList)
 
 ```html
 <ElasticList v-model="value">
+  <!--
+    v-slot解构：
+      i: {number} 行号
+      v: {any} 数组第i项
+      showDelBtn: {boolean} 是否显示删除按钮
+      deleteRow: {function} 删除行
+  -->
   <template v-slot="{v,i,showDelBtn,deleteRow}">
+    <!--自定义行元素-->
     <div class="row">
       <el-input v-model="value[i]"/>
-      <i class="el-icon-circle-close"
-         @click="deleteRow(i)"
-         v-show="showDelBtn"
-      />
+      <!--自定义删除按钮-->
+      <i v-show="showDelBtn" class="el-icon-circle-close" @click="deleteRow(i)"/>
     </div>
   </template>
+
+  <!--自定义增加行按钮-->
   <el-button slot="append-row-btn">自定义增加行按钮</el-button>
 </ElasticList>
 ```
 
+<br/>
+
 props: 
 
-| Attribute | Description | Way Of Configuration | Type | Accepted Values | Default |
+| Attribute | Description | Configuration Mode | Type | Accepted Values | Default |
 | --- | --- | --- | --- | --- | --- |
-| value / v-model | 双绑 | props | String | | |
-| elTableProps | el-table属性 | global，props | Object | *详见下方说明 | |
-| sortable | 是否开启拖拉拽排序 | global，props | Boolean | | true |
-| disabled | 禁用模式下无法新增、删除、排序 | global，props | Boolean | | false |
-| count | 行数限制 | global，props | Number, Array | *详见下方说明 | |
-| rowTemplate | 新增加row对应的模板 | global，props | Object, Function | *详见下方说明 | {} / '' |
-| watchValue | 是否监听value的变化 | global，props | Boolean | *详见下方说明 | true |
-| animate | 添加行时的动画名称（列表形式） | global，props | String | https://animate.style 如不需要动画 传'' | zoomIn |
+| v-model / value | 双绑 | props | array | | |
+| elTableProps | el-table属性 | global，props | object | *see below* | |
+| sortable | 是否开启拖拉拽排序 | global，props | boolean | | true |
+| disabled | 禁用模式下无法新增、删除、排序 | global，props | boolean | | false |
+| count | 行数限制 | global，props | number, array | *see below* | |
+| rowTemplate | 新增加row对应的模板 | global，props | object, function | *see below* | {} / '' |
+| watchValue | 是否监听value的变化 | global，props | boolean | *see below* | true |
+| animate | 添加行时的动画名称（列表形式） | global，props | string | https://animate.style （不需要动画请传空字符串） | 'zoomIn' |
+
+<br/>
 
 elTableProps:
 
