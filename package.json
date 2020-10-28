@@ -30,7 +30,7 @@
     "animate.css": "^4.1.1",
     "core-js": "^3.6.0",
     "lodash": "^4.17.20",
-    "plain-kit": "^0.4.1",
+    "plain-kit": "^0.4.3",
     "sortablejs": "^1.12.0",
     "uuid": "^8.3.1"
   },

@@ -4,22 +4,25 @@
     <template v-if="isTable">
       <el-table :data="value__" v-bind="ElTableProps">
         <slot/>
-        <slot name="operation-column"
-              v-if="!Disabled"
-              :showDelBtn="canDel"
-              :deleteRow="deleteRow"
+        <slot
+          name="operation-column"
+          v-if="!Disabled"
+          :showDelBtn="canDel"
+          :deleteRow="deleteRow"
         >
           <el-table-column label="操作" align="center">
             <template slot-scope="scope">
-              <el-button type="danger"
-                         circle
-                         icon="el-icon-delete"
-                         @click="()=>{deleteRow(scope.$index)}"
-                         v-show="canDel"
+              <el-button
+                type="danger"
+                circle
+                icon="el-icon-delete"
+                @click="()=>{deleteRow(scope.$index)}"
+                v-show="canDel"
               />
             </template>
           </el-table-column>
         </slot>
+        <slot name="append"/>
       </el-table>
 
       <span @click="appendRow" v-show="canAppend">
@@ -30,8 +33,9 @@
     </template>
 
     <template v-else>
-      <transition-group class="list-wrapper"
-                        :enter-active-class="Animate&&adding?`animate__animated animate__${Animate}`:''">
+      <transition-group
+        class="list-wrapper"
+        :enter-active-class="Animate&&adding?`animate__animated animate__${Animate}`:''">
         <div v-for="(v,i) of value__" :key="value__[i][rowKey]">
           <slot
             :i="i"
@@ -42,9 +46,10 @@
           />
         </div>
       </transition-group>
-      <span v-if="!Disabled"
-            @click="appendRow"
-            v-show="!maxRow||value__.length<maxRow">
+      <span
+        v-if="!Disabled"
+        @click="appendRow"
+        v-show="!maxRow||value__.length<maxRow">
         <slot name="append-row-btn"/>
       </span>
     </template>
@@ -83,7 +88,7 @@ export default {
   },
   props: {
     value: {
-      validator: value => ['Null', 'Array'].includes(typeOf(value)),
+      validator: value => ['null', 'array'].includes(typeOf(value)),
     },
     count: {
       type: [Number, Array]
@@ -92,13 +97,13 @@ export default {
     elTableProps: Object,
     disabled: {
       // 不能用type 因为type为Boolean时 如果用户没传 默认值为false而不是undefined 会影响getFinalProp的判断
-      validator: value => ['Boolean'].includes(typeOf(value)),
+      validator: value => ['boolean'].includes(typeOf(value)),
     },
     sortable: {
-      validator: value => ['Boolean'].includes(typeOf(value)),
+      validator: value => ['boolean'].includes(typeOf(value)),
     },
     watchValue: {
-      validator: value => ['Boolean'].includes(typeOf(value)),
+      validator: value => ['boolean'].includes(typeOf(value)),
     },
     animate: String
   },

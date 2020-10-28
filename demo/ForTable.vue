@@ -4,6 +4,7 @@
       v-model="value"
       v-bind="$attrs.props"
       :row-template="rowTemplate"
+      ref="elasticList"
     >
       <el-table-column label="类型" prop="name"/>
       <!--自定义末尾的操作列-->
@@ -35,7 +36,7 @@ import { JsonEditorVue } from 'json-editor-vue'
 import ElasticList from '../src/index'
 
 export default {
-  components: { ElasticList, JsonEditorVue },
+  components: { JsonEditorVue },
   data () {
     return {
       value: Array.from(Array(3), (v, i) => ({ name: i })),
@@ -43,6 +44,11 @@ export default {
         name: Math.random()
       }),
     }
+  },
+  mounted () {
+    this.$refs.elasticList.$children[0].$on('row-click', e => {
+      console.log(e)
+    })
   },
   methods: {
     set () {

@@ -18,7 +18,11 @@
 element-ui集成说明：
 
 - element-ui是以外置依赖的方式引入的 所以不必担心代码体积和版本不一致等问题
-- 集成风格是非侵入式的 支持el-table的所有参数（且可全局配置） el-table-column则是以slot形式传入
+- 集成风格是非侵入式的
+  - 支持el-table的所有参数（且可全局配置）
+  - 支持el-table的所有事件（≥0.1.1）
+  - 支持el-table的所有slot（≥0.1.1）
+  - el-table-column以slot形式传入
 - 适配element-ui的el-form组件 支持el-form的全局disabled
 
 <br/>
@@ -31,16 +35,15 @@ $ yarn add elastic-list
 
 **Dependencies**：vue element-ui
 
-<br/>
-
-```js
-import { ElasticList } from 'elastic-list'
-components: { ElasticList }
-```
-
-**Globally:**
 ```js
 import ElasticList from 'elastic-list'
+
+// 组件内引入
+components: { ElasticList }
+// ≤0.1.0
+components: { ElasticList.ElasticList }
+
+// 全局引入
 Vue.use(ElasticList)
 ```
 
@@ -92,7 +95,8 @@ Vue.use(ElasticList)
   <!--
     v-slot解构：
       i: {number} 行号
-      v: {any} 数组第i项
+      v: {any} 数组第i项（deprecated）
+      item: {any} 数组第i项（≥0.1.1）
       showDelBtn: {boolean} 是否显示删除按钮
       deleteRow: {function} 删除行
   -->

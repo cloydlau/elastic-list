@@ -20,7 +20,12 @@ if (typeof window !== 'undefined' && window.Vue) {
   install(window.Vue)
 }
 
-export default {
-  install,
+// @ts-ignore
+ElasticList.install = install
+
+export default ElasticList
+
+// todo: deprecated
+export {
   ElasticList
 }
