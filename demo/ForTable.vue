@@ -36,7 +36,7 @@ import { JsonEditorVue } from 'json-editor-vue'
 import ElasticList from '../src/index'
 
 export default {
-  components: { JsonEditorVue },
+  components: { ElasticList, JsonEditorVue },
   data () {
     return {
       value: Array.from(Array(3), (v, i) => ({ name: i })),

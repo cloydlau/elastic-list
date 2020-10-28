@@ -20,7 +20,7 @@ element-ui集成说明：
 - element-ui是以外置依赖的方式引入的 所以不必担心代码体积和版本不一致等问题
 - 集成风格是非侵入式的
   - 支持el-table的所有参数（且可全局配置）
-  - 支持el-table的所有事件（≥0.1.1）
+  - 支持el-table的所有事件
   - 支持el-table的所有slot（≥0.1.1）
   - el-table-column以slot形式传入
 - 适配element-ui的el-form组件 支持el-form的全局disabled
@@ -60,33 +60,45 @@ Vue.use(ElasticList)
 </ElasticList>
 ```
 
-自定义操作列和添加按钮：
+- 自定义操作列和添加按钮
 
-```html
-<ElasticList v-model="value">
-  <el-table-column label="姓名" prop="name"/>
-  <el-table-column label="年龄" prop="age"/>
+  ```html
+  <ElasticList v-model="value">
+    <el-table-column label="姓名" prop="name"/>
+    <el-table-column label="年龄" prop="age"/>
+  
+    <!--自定义末尾的操作列-->
+    <template #operation-column="{showDelBtn,deleteRow}">
+      <el-table-column label="操作" align="center">
+        <template slot-scope="scope">
+          <el-button>其他按钮</el-button>
+          <el-button 
+            type="danger"
+            circle
+            icon="el-icon-delete"
+            @click="()=>{deleteRow(scope.$index)}"
+            v-show="showDelBtn"
+          />
+        </template>
+      </el-table-column>
+    </template>
+  
+    <!--自定义增加行按钮-->
+    <button slot="append-row-btn">增加一行</button>
+  </ElasticList>
+  ```
 
-  <!--自定义末尾的操作列-->
-  <template #operation-column="{showDelBtn,deleteRow}">
-    <el-table-column label="操作" align="center">
-      <template slot-scope="scope">
-        <el-button>其他按钮</el-button>
-        <el-button 
-          type="danger"
-          circle
-          icon="el-icon-delete"
-          @click="()=>{deleteRow(scope.$index)}"
-          v-show="showDelBtn"
-        />
-      </template>
-    </el-table-column>
-  </template>
+- 监听el-table事件
 
-  <!--自定义增加行按钮-->
-  <button slot="append-row-btn">增加一行</button>
-</ElasticList>
-```
+  ```
+  <ElasticList ref="elasticList"/>
+  
+  this.$refs.elasticList.$children[0].$on('row-click', e => {
+    console.log(e)
+  })
+  ```
+
+<br/>
 
 列表形式：
 
