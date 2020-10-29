@@ -22,7 +22,7 @@ module.exports = {
       library: 'elastic-list',
       libraryTarget: 'umd',
       umdNamedDefine: true,
-      libraryExport: 'default'
+      //libraryExport: 'default'
     },
     externals
   },
