@@ -50,7 +50,9 @@
         v-if="!Disabled"
         @click="appendRow"
         v-show="!maxRow||value__.length<maxRow">
-        <slot name="append-row-btn"/>
+        <slot name="append-row-btn">
+          <el-button icon="el-icon-plus" class="append-row-btn"/>
+        </slot>
       </span>
     </template>
   </div>
