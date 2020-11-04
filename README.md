@@ -40,8 +40,6 @@ import ElasticList from 'elastic-list'
 
 // 组件内引入
 components: { ElasticList }
-// ≤0.1.0
-components: { ElasticList.ElasticList }
 
 // 全局引入
 Vue.use(ElasticList)
@@ -51,7 +49,7 @@ Vue.use(ElasticList)
 
 ### Quick Start
 
-表格形式：
+Example for tables:
 
 ```html
 <ElasticList v-model="value" :elTableProps="{}">
@@ -67,23 +65,28 @@ Vue.use(ElasticList)
     <el-table-column label="姓名" prop="name"/>
     <el-table-column label="年龄" prop="age"/>
   
-    <!--自定义末尾的操作列-->
+    <!-- the last column for row operation -->
     <template #operation-column="{showDelBtn,deleteRow}">
       <el-table-column label="操作" align="center">
         <template slot-scope="scope">
+  
+          <!-- other buttons -->
           <el-button>其他按钮</el-button>
+  
+          <!-- delete button -->
           <el-button 
             type="danger"
             circle
             icon="el-icon-delete"
-            @click="()=>{deleteRow(scope.$index)}"
+            @click="() => { deleteRow(scope.$index) }"
             v-show="showDelBtn"
           />
+  
         </template>
       </el-table-column>
     </template>
   
-    <!--自定义增加行按钮-->
+    <!-- row-adding button -->
     <button slot="append-row-btn">增加一行</button>
   </ElasticList>
   ```
@@ -100,31 +103,63 @@ Vue.use(ElasticList)
 
 <br/>
 
-列表形式：
+Example for lists:
 
-```html
-<ElasticList v-model="value">
-  <!--
-    v-slot解构：
-      i: {number} 行号
-      v: {any} 数组第i项（deprecated）
-      item: {any} 数组第i项（≥0.1.1）
-      showDelBtn: {boolean} 是否显示删除按钮
-      deleteRow: {function} 删除行
-  -->
-  <template v-slot="{v,i,showDelBtn,deleteRow}">
-    <!--自定义行元素-->
-    <div class="row">
-      <el-input v-model="value[i]"/>
-      <!--自定义删除按钮-->
-      <i v-show="showDelBtn" class="el-icon-circle-close" @click="deleteRow(i)"/>
-    </div>
-  </template>
+- value-type array
 
-  <!--自定义增加行按钮-->
-  <el-button slot="append-row-btn">自定义增加行按钮</el-button>
-</ElasticList>
-```
+  ```html
+  <ElasticList v-model="value" :watchValue="false" v-if="value">
+    <!--
+      v-slot解构：
+        i: {number} 行号
+        item: {any} 数组第i项
+        showDelBtn: {boolean} 是否显示删除按钮
+        deleteRow: {function} 删除行
+    -->
+    <template v-slot="{v,i,showDelBtn,deleteRow}">
+      <div>
+  
+        <!-- row contents -->
+        <el-input v-model="value[i]"/>
+  
+        <!-- delete button -->
+        <i v-show="showDelBtn" class="el-icon-circle-close" @click="deleteRow(i)"/>
+  
+      </div>
+    </template>
+  
+    <!-- row-adding button -->
+    <el-button slot="append-row-btn">自定义增加行按钮</el-button>
+  </ElasticList>
+  ```
+  
+- reference-type array
+
+  ```html
+  <el-form :model="form">
+    <ElasticList v-model="form.list">
+      <template v-slot="{v,i,showDelBtn,deleteRow}">
+        <div>
+  
+          <!-- delete button -->
+          <i class="el-icon-circle-close"
+             @click="deleteRow(i)"
+             v-show="showDelBtn"
+          />
+  
+          <!-- editable elements -->
+          <el-form-item label="名称" :prop="'list.' + i + '.name'">
+            <el-input v-model="v.name"/>
+          </el-form-item>
+          <el-form-item label="排序" :prop="'list.' + i + '.sort'">
+            <el-input-number v-model="v.sort"/>
+          </el-form-item>
+  
+        </div>
+      </template>
+    </ElasticList>
+  </el-form>
+  ```
 
 <br/>
 
@@ -182,7 +217,7 @@ Vue.use(ElasticList, {
 
 rowTemplate:
 
-> 如果value[0]的类型是json对象 则默认值为{} 否则为''
+> 如果value[0]的类型是string 则默认值为'' 否则为{}
 
 > 可以手动指定 支持Function Function的返回值将作为新增项
 

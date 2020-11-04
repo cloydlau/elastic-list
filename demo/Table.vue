@@ -26,6 +26,7 @@
     </ElasticList>
     <br/>
     <el-button @click="set" type="primary" style="width:100%">编程式设值</el-button>
+
     <br/><br/>
     <JsonEditorVue :value="value"/>
   </div>

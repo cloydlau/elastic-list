@@ -142,7 +142,7 @@ export default {
       return getFinalProp(disabled, this.disabled, this.elForm?.disabled)
     },
     RowTemplate () {
-      return getFinalProp(rowTemplate, this.rowTemplate, this.isObjArr ? {} : '')
+      return getFinalProp(rowTemplate, this.rowTemplate, typeof this.value?.[0] === 'string' ? '' : {})
     },
     maxRow () {
       const globalCount = this.count || count
@@ -156,9 +156,6 @@ export default {
         return globalCount[0]
       }
     },
-    isObjArr () {
-      return this.value && isPlainObject(this.value[0])
-    }
   },
   data () {
     return {
@@ -172,7 +169,8 @@ export default {
       synchronizing: false,
       adding: false,
       unWatchValue: null,
-      id: 'elastic-list-' + uuidv1()
+      id: 'elastic-list-' + uuidv1(),
+      WatchValue: undefined
     }
   },
   watch: {
@@ -183,7 +181,7 @@ export default {
         //  this.synchronizing = false
         //} else {
         //if (!isEqualWith(newVal, this.value)) {
-        this.isTable && this.sync(cloneDeep(newVal).map(v => {
+        this.WatchValue && this.sync(cloneDeep(newVal).map(v => {
           delete v[this.rowKey]
           return v
         }))
@@ -227,7 +225,8 @@ export default {
           deep: true
         })
 
-        if (!getFinalProp(watchValue, newVal, true)) {
+        this.WatchValue = getFinalProp(watchValue, newVal, true)
+        if (!this.WatchValue) {
           unWatchValue()
         }
       }
@@ -292,7 +291,8 @@ export default {
     },
     appendRow () {
       this.adding = true
-      const template = this.RowTemplate instanceof Function ? this.RowTemplate(this.value__.length + 1) : this.RowTemplate
+      const template = this.RowTemplate instanceof Function ? this.RowTemplate(this.value__.length + 1) :
+        this.RowTemplate
       this.value__.push({
         [this.rowKey]: uuidv1(),
         ...this.isTable && template

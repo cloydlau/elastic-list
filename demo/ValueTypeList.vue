@@ -18,6 +18,7 @@
       </template>
       <el-button slot="append-row-btn">自定义增加行按钮</el-button>
     </ElasticList>
+
     <br/>
     <JsonEditorVue :value="value"/>
   </div>
@@ -54,7 +55,7 @@ export default {
   position: relative;
   box-shadow: 0 2px 4px rgba(0, 0, 0, .12), 0 0 6px rgba(0, 0, 0, .04);
 
-  i {
+  .el-icon-circle-close {
     position: absolute;
     font-size: 32px;
     right: -16px;
