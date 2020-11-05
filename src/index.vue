@@ -241,7 +241,10 @@ export default {
       this.$emit('input', value)
       // fixing: 用于el表单中 且校验触发方式为blur时 没有生效
       if (this.$parent?.$options?._componentTag === ('el-form-item') && this.$parent.rules?.trigger === 'blur') {
-        this.$parent.$emit('el.form.blur')
+        // fix: el-form-item深层嵌套时事件触发过早
+        this.$parent.$nextTick(() => {
+          this.$parent.$emit('el.form.blur')
+        })
       }
     },
     /*dragTable () {
