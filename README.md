@@ -21,7 +21,7 @@ element-ui集成说明：
 - 集成风格是非侵入式的
   - 支持el-table的所有参数（且可全局配置）
   - 支持el-table的所有事件
-  - 支持el-table的所有slot（≥0.1.1）
+  - 支持el-table的所有slot
   - el-table-column以slot形式传入
 - 适配element-ui的el-form组件 支持el-form的全局disabled
 
