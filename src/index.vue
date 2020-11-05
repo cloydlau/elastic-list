@@ -62,7 +62,7 @@
 import 'animate.css'
 import { cloneDeep, isPlainObject } from 'lodash'
 import uuidv1 from 'uuid/dist/esm-browser/v1'
-import { sortable, elTableProps, disabled, count, rowTemplate, watchValue, animate } from './config'
+import { sortable, elTableProps, disabled, count, rowTemplate, watchValue, animate, sortablejsProps } from './config'
 import { typeOf } from 'plain-kit'
 
 /**
@@ -97,6 +97,7 @@ export default {
     },
     rowTemplate: {},
     elTableProps: Object,
+    sortablejsProps: Object,
     disabled: {
       // 不能用type 因为type为Boolean时 如果用户没传 默认值为false而不是undefined 会影响getFinalProp的判断
       validator: value => ['boolean'].includes(typeOf(value)),
@@ -133,6 +134,14 @@ export default {
     },
     isTable () {
       return this.$slots.default && this.$slots.default[0]?.tag.includes('ElTableColumn')
+    },
+    SortablejsProps () {
+      return {
+        filter: 'input,.el-rate',
+        preventOnFilter: false,
+        animation: 500,
+        ...getFinalProp(sortablejsProps, this.sortablejsProps)
+      }
     },
     Sortable () {
       return this.Disabled ? false :
@@ -266,7 +275,7 @@ export default {
         const Sortable = require('sortablejs').default //(await import('sortablejs')).default 在生产环境报错
         const el = document.querySelector('#' + this.id + (this.isTable ? ' tbody' : ' .list-wrapper'))
         this.sortablejs = Sortable.create(el, {
-          animation: 500,
+          ...this.SortablejsProps,
           onStart: () => {
             this.sorting = true
           },

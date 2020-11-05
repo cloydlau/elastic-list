@@ -168,7 +168,8 @@ props:
 | Attribute | Description | Configuration Mode | Type | Accepted Values | Default |
 | --- | --- | --- | --- | --- | --- |
 | v-model / value | 双绑 | props | array | | |
-| elTableProps | el-table属性 | global，props | object | *see below* | |
+| elTableProps | el-table配置 | global，props | object | *see below* | |
+| sortablejsProps | sortablejs配置 | global，props | object | *see below* | |
 | sortable | 是否开启拖拉拽排序 | global，props | boolean | | true |
 | disabled | 禁用模式下无法新增、删除、排序 | global，props | boolean | | false |
 | count | 行数限制 | global，props | number, array | *see below* | |
@@ -192,6 +193,22 @@ elTableProps:
 ```
 
 配置方式：与默认值进行混入 [el-table文档](https://element.eleme.cn/#/zh-CN/component/table)
+
+<br/>
+
+sortablejsProps:
+
+默认值：
+
+```
+{
+  filter: 'input,.el-rate',
+  preventOnFilter: false,
+  animation: 500,
+}
+```
+
+配置方式：与默认值进行混入 [sortablejs文档](https://github.com/SortableJS/sortablejs)
 
 <br/>
 
@@ -246,3 +263,9 @@ watchValue:
 ```js
 axios.post().finally(() => { this.loading = false })
 ```
+
+<br/>
+
+### Notice
+
+- 由于在输入框内拖动时 用户的用意往往是选中输入内容而不是拖动排序 所以默认在输入框内不触发排序（可配置）
