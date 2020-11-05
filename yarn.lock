@@ -6128,10 +6128,10 @@ pkg-dir@^4.1.0:
   dependencies:
     find-up "^4.0.0"
 
-plain-kit@^0.4.3:
-  version "0.4.3"
-  resolved "https://registry.npmjs.org/plain-kit/-/plain-kit-0.4.3.tgz#20844addf60df6cfb03306f790e5a0b8819e096c"
-  integrity sha512-gfcF3NxuGzXhRLG9YIkLnyW4FgbCfjri/je/OFLe+mhWlpooBwJiAo2wf/T5UK9t6bAjOIVJeP/cOmGZDGZHYQ==
+plain-kit@^0.4.4:
+  version "0.4.4"
+  resolved "https://registry.npmjs.org/plain-kit/-/plain-kit-0.4.4.tgz#0af7240d5b403e39c86219e5bdf0f5fd72a02b87"
+  integrity sha512-sQZchXB6oMebLgv59a2fBTVMG47lnwcBh2wUjsl8KDB6qXISUMA+GnOW+0o9MI4//mEeUP6UGFIvn81xvQRg3w==
   dependencies:
     animate.css "^4.1.1"
     core-js "^3.6.0"
@@ -6139,7 +6139,7 @@ plain-kit@^0.4.3:
     lodash "^4.17.20"
     qrcode "^1.4.4"
     qs "^6.9.4"
-    sweetalert2 "^10.8.1"
+    sweetalert2 "^10.9.0"
 
 pngjs@^3.3.0:
   version "3.4.0"
@@ -7004,10 +7004,10 @@ sass-loader@^10.0.0:
     schema-utils "^3.0.0"
     semver "^7.3.2"
 
-sass@^1.28.0:
-  version "1.28.0"
-  resolved "https://registry.npmjs.org/sass/-/sass-1.28.0.tgz#546f1308ff74cc4ec2ad735fd35dc18bc3f51f72"
-  integrity sha512-9FWX/0wuE1KxwfiP02chZhHaPzu6adpx9+wGch7WMOuHy5npOo0UapRI3FNSHva2CczaYJu2yNUBN8cCSqHz/A==
+sass@^1.29.0:
+  version "1.29.0"
+  resolved "https://registry.npmjs.org/sass/-/sass-1.29.0.tgz#ec4e1842c146d8ea9258c28c141b8c2b7c6ab7f1"
+  integrity sha512-ZpwAUFgnvAUCdkjwPREny+17BpUj8nh5Yr6zKPGtLNTLrmtoRYIjm7njP24COhjJldjwW1dcv52Lpf4tNZVVRA==
   dependencies:
     chokidar ">=2.0.0 <4.0.0"
 
@@ -7638,7 +7638,7 @@ svgo@^1.0.0:
     unquote "~1.1.1"
     util.promisify "~1.0.0"
 
-sweetalert2@^10.8.1:
+sweetalert2@^10.9.0:
   version "10.9.0"
   resolved "https://registry.npmjs.org/sweetalert2/-/sweetalert2-10.9.0.tgz#f3d0c63caa87a5804d8205cbbbe5d1369fb8af24"
   integrity sha512-ijIYsQ4ybOVt49GbZd5FfLoA5A3CCtHK2iSJqnIbCGT/p9d0SwhjtHNO10w/VU8chzM+5hJQ2J6Z6eAEUYtXtw==
