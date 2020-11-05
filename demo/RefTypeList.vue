@@ -5,7 +5,7 @@
         v-model="form.list"
         v-bind="$attrs.props"
       >
-        <template v-slot="{v,i,showDelBtn,deleteRow}">
+        <template v-slot="{item,i,showDelBtn,deleteRow}">
           <div class="round">
             <!--删除按钮-->
             <i class="el-icon-circle-close"
@@ -14,10 +14,10 @@
             />
             <!--可编辑元素-->
             <el-form-item label="名称" :prop="'list.' + i + '.name'">
-              <el-input v-model="v.name"/>
+              <el-input v-model="item.name"/>
             </el-form-item>
             <el-form-item label="排序" :prop="'list.' + i + '.sort'">
-              <el-input-number v-model="v.sort"/>
+              <el-input-number v-model="item.sort"/>
             </el-form-item>
           </div>
         </template>
