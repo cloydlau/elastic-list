@@ -2754,6 +2754,11 @@ core-js@^3.6.0, core-js@^3.6.5:
   resolved "https://registry.npmjs.org/core-js/-/core-js-3.6.5.tgz#7395dc273af37fb2e50e9bd3d9fe841285231d1a"
   integrity sha512-vZVEEwZoIsI+vPEuoF9Iqf5H7/M3eeQqWlQnYa8FSKKePuYTf5MWnxb5SDAzCa60b3JBRS5g9b+Dq7b1y/RCrA==
 
+core-js@^3.7.0:
+  version "3.7.0"
+  resolved "https://registry.npmjs.org/core-js/-/core-js-3.7.0.tgz#b0a761a02488577afbf97179e4681bf49568520f"
+  integrity sha512-NwS7fI5M5B85EwpWuIwJN4i/fbisQUwLwiSNUWeXlkAZ0sbBjLEvLvFLf1uzAUV66PcEPt4xCGCmOZSxVf3xzA==
+
 core-util-is@1.0.2, core-util-is@~1.0.0:
   version "1.0.2"
   resolved "https://registry.npmjs.org/core-util-is/-/core-util-is-1.0.2.tgz#b5fd54220aa2bc5ab57aab7140c940754503c1a7"
@@ -3032,10 +3037,10 @@ dashdash@^1.12.0:
   dependencies:
     assert-plus "^1.0.0"
 
-dayjs@^1.9.4:
-  version "1.9.4"
-  resolved "https://registry.npmjs.org/dayjs/-/dayjs-1.9.4.tgz#fcde984e227f4296f04e7b05720adad2e1071f1b"
-  integrity sha512-ABSF3alrldf7nM9sQ2U+Ln67NRwmzlLOqG7kK03kck0mw3wlSSEKv/XhKGGxUjQcS57QeiCyNdrFgtj9nWlrng==
+dayjs@^1.9.5:
+  version "1.9.6"
+  resolved "https://registry.npmjs.org/dayjs/-/dayjs-1.9.6.tgz#6f0c77d76ac1ff63720dd1197e5cb87b67943d70"
+  integrity sha512-HngNLtPEBWRo8EFVmHFmSXAjtCX8rGNqeXQI0Gh7wCTSqwaKgPIDqu9m07wABVopNwzvOeCb+2711vQhDlcIXw==
 
 de-indent@^1.0.2:
   version "1.0.2"
@@ -6128,18 +6133,18 @@ pkg-dir@^4.1.0:
   dependencies:
     find-up "^4.0.0"
 
-plain-kit@^0.4.4:
-  version "0.4.4"
-  resolved "https://registry.npmjs.org/plain-kit/-/plain-kit-0.4.4.tgz#0af7240d5b403e39c86219e5bdf0f5fd72a02b87"
-  integrity sha512-sQZchXB6oMebLgv59a2fBTVMG47lnwcBh2wUjsl8KDB6qXISUMA+GnOW+0o9MI4//mEeUP6UGFIvn81xvQRg3w==
+plain-kit@^0.4.6:
+  version "0.4.6"
+  resolved "https://registry.npmjs.org/plain-kit/-/plain-kit-0.4.6.tgz#28e045b80371bea98b979b38cd183d97532ebaff"
+  integrity sha512-3cap1ZHos2VLC7CUaJjsA4UVQYy+HmaNKY264s1faaYao6APcZJ36+2bo+XdpdAqDP88rXMDoophxrP8TjqxoQ==
   dependencies:
     animate.css "^4.1.1"
-    core-js "^3.6.0"
-    dayjs "^1.9.4"
+    core-js "^3.7.0"
+    dayjs "^1.9.5"
     lodash "^4.17.20"
     qrcode "^1.4.4"
     qs "^6.9.4"
-    sweetalert2 "^10.9.0"
+    sweetalert2 "^10.9.1"
 
 pngjs@^3.3.0:
   version "3.4.0"
@@ -7638,10 +7643,10 @@ svgo@^1.0.0:
     unquote "~1.1.1"
     util.promisify "~1.0.0"
 
-sweetalert2@^10.9.0:
-  version "10.9.0"
-  resolved "https://registry.npmjs.org/sweetalert2/-/sweetalert2-10.9.0.tgz#f3d0c63caa87a5804d8205cbbbe5d1369fb8af24"
-  integrity sha512-ijIYsQ4ybOVt49GbZd5FfLoA5A3CCtHK2iSJqnIbCGT/p9d0SwhjtHNO10w/VU8chzM+5hJQ2J6Z6eAEUYtXtw==
+sweetalert2@^10.9.1:
+  version "10.9.1"
+  resolved "https://registry.npmjs.org/sweetalert2/-/sweetalert2-10.9.1.tgz#e3df396230d829925dbb30aadea5430b5e17dec1"
+  integrity sha512-StLC1DI646iYUWH4I35HDytfLaz5lBAyvc0rGZ1yx+U8y4NJIcOKbgAFocgM+J4PElGCB6/EZMfTt4JhUAtF5g==
 
 tapable@^1.0.0, tapable@^1.1.3:
   version "1.1.3"
