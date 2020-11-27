@@ -105,34 +105,6 @@ Example for tables:
 
 Example for lists:
 
-- value-type array
-
-  ```html
-  <ElasticList v-model="value" :watchValue="false" v-if="value">
-    <!--
-      v-slot解构：
-        i: {number} 行号
-        item: {any} 数组第i项
-        showDelBtn: {boolean} 是否显示删除按钮
-        deleteRow: {function} 删除行
-    -->
-    <template v-slot="{v,i,showDelBtn,deleteRow}">
-      <div>
-  
-        <!-- row contents -->
-        <el-input v-model="value[i]"/>
-  
-        <!-- delete button -->
-        <i v-show="showDelBtn" class="el-icon-circle-close" @click="deleteRow(i)"/>
-  
-      </div>
-    </template>
-  
-    <!-- row-adding button -->
-    <el-button slot="append-row-btn">自定义增加行按钮</el-button>
-  </ElasticList>
-  ```
-  
 - reference-type array
 
   ```html
@@ -159,6 +131,34 @@ Example for lists:
       </template>
     </ElasticList>
   </el-form>
+  ```
+
+- value-type array
+
+  ```html
+  <ElasticList v-model="value" :watchValue="false" v-if="value">
+    <!--
+      v-slot解构：
+        i: {number} 行号
+        item: {any} 数组第i项
+        showDelBtn: {boolean} 是否显示删除按钮
+        deleteRow: {function} 删除行
+    -->
+    <template v-slot="{v,i,showDelBtn,deleteRow}">
+      <div>
+  
+        <!-- row contents -->
+        <el-input v-model="value[i]"/>
+  
+        <!-- delete button -->
+        <i v-show="showDelBtn" class="el-icon-circle-close" @click="deleteRow(i)"/>
+  
+      </div>
+    </template>
+  
+    <!-- row-adding button -->
+    <el-button slot="append-row-btn">自定义增加行按钮</el-button>
+  </ElasticList>
   ```
 
 <br/>
