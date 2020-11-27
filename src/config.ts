@@ -1,8 +1,9 @@
-let sortable, disabled, count, rowTemplate, elTableProps, watchValue, animate
+let sortable, disabled, count, rowTemplate, elTableProps, watchValue, animate, sortablejsProps
 
 export const init = (opts: {
   sortable?: boolean
   elTableProps?: object
+  sortablejsProps?: object
   disabled?: boolean
   watchValue?: boolean
   count?: number | [number, number]
@@ -11,6 +12,7 @@ export const init = (opts: {
 } = {}) => {
   sortable = opts.sortable
   elTableProps = opts.elTableProps
+  sortablejsProps = opts.sortablejsProps
   disabled = opts.disabled
   watchValue = opts.watchValue
   count = opts.count
@@ -19,5 +21,5 @@ export const init = (opts: {
 }
 
 export {
-  sortable, elTableProps, disabled, count, rowTemplate, watchValue, animate
+  sortable, elTableProps, disabled, count, rowTemplate, watchValue, animate, sortablejsProps
 }

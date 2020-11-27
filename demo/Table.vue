@@ -3,9 +3,17 @@
     <ElasticList
       v-model="value"
       v-bind="$attrs.props"
+      :sortablejsProps="{handle:'.handle'}"
       :row-template="rowTemplate"
       ref="elasticList"
     >
+      <el-table-column type="index">
+        <template slot-scope="scope">
+          <span class="handle">
+            {{ '# ' + (scope.$index + 1) }}
+          </span>
+        </template>
+      </el-table-column>
       <el-table-column label="类型" prop="name"/>
       <!--自定义末尾的操作列-->
       <!--<template #operation-column="{showDelBtn,deleteRow}">
@@ -60,5 +68,7 @@ export default {
 </script>
 
 <style lang="scss" scoped>
-
+.handle {
+  cursor: pointer;
+}
 </style>

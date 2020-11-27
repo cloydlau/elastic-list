@@ -21,7 +21,7 @@ element-ui集成说明：
 - 集成风格是非侵入式的
   - 支持el-table的所有参数（且可全局配置）
   - 支持el-table的所有事件
-  - 支持el-table的所有slot（≥0.1.1）
+  - 支持el-table的所有slot
   - el-table-column以slot形式传入
 - 适配element-ui的el-form组件 支持el-form的全局disabled
 
@@ -168,7 +168,8 @@ props:
 | Attribute | Description | Configuration Mode | Type | Accepted Values | Default |
 | --- | --- | --- | --- | --- | --- |
 | v-model / value | 双绑 | props | array | | |
-| elTableProps | el-table属性 | global，props | object | *see below* | |
+| elTableProps | el-table配置 | global，props | object | *see below* | |
+| sortablejsProps | sortablejs配置 | global，props | object | *see below* | |
 | sortable | 是否开启拖拉拽排序 | global，props | boolean | | true |
 | disabled | 禁用模式下无法新增、删除、排序 | global，props | boolean | | false |
 | count | 行数限制 | global，props | number, array | *see below* | |
@@ -192,6 +193,22 @@ elTableProps:
 ```
 
 配置方式：与默认值进行混入 [el-table文档](https://element.eleme.cn/#/zh-CN/component/table)
+
+<br/>
+
+sortablejsProps:
+
+默认值：
+
+```
+{
+  filter: 'input,.el-rate',
+  preventOnFilter: false,
+  animation: 500,
+}
+```
+
+配置方式：与默认值进行混入 [sortablejs文档](https://github.com/SortableJS/sortablejs)
 
 <br/>
 
@@ -246,3 +263,38 @@ watchValue:
 ```js
 axios.post().finally(() => { this.loading = false })
 ```
+
+<br/>
+
+slots:
+
+| name | Description |
+| --- | --- |
+| append-row-btn | 增加行的触发按钮 |
+| operation-column | el-table最后一列（用于删除行等操作） |
+| el-table所有slot | el-table所有slot |
+
+<br/>
+
+拖动触发范围
+
+默认是整行均可以拖动 如果你想要指定触发元素：
+
+```html
+<ElasticList v-model="value" :sortablejsProps="{handle:'.handle'}">
+  <el-table-column type="index">
+    <template slot-scope="scope">
+      <span class="handle">
+        {{ '# ' + (scope.$index + 1) }}
+      </span>
+    </template>
+  </el-table-column>
+  <el-table-column label="姓名" prop="name"/>
+</ElasticList>
+```
+
+<br/>
+
+### Notice
+
+- 由于在输入框内拖动时 用户的用意往往是选中输入内容而不是拖动排序 所以默认在输入框内不触发排序（可配置）

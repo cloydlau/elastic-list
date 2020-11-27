@@ -7,7 +7,7 @@
       v-if="!loading"
       :watchValue="false"
     >
-      <template v-slot="{v,i,showDelBtn,deleteRow}">
+      <template v-slot="{item,i,showDelBtn,deleteRow}">
         <div class="row">
           <i class="el-icon-circle-close"
              @click="deleteRow(i)"
