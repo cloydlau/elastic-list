@@ -114,9 +114,10 @@ Example for lists:
         <div>
   
           <!-- delete button -->
-          <i class="el-icon-circle-close"
-             @click="deleteRow(i)"
-             v-show="showDelBtn"
+          <i
+            class="el-icon-circle-close"
+            @click="deleteRow(i)"
+            v-show="showDelBtn"
           />
   
           <!-- editable elements -->
