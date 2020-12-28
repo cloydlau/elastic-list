@@ -28,26 +28,25 @@
   },
   "dependencies": {
     "animate.css": "^4.1.1",
-    "core-js": "^3.7.0",
     "lodash": "^4.17.20",
-    "plain-kit": "^0.4.6",
+    "plain-kit": "^0.4.10",
     "sortablejs": "^1.12.0",
-    "uuid": "^8.3.1"
+    "uuid": "^8.3.2"
   },
   "peerDependencies": {
-    "element-ui": "^2.14.0",
+    "element-ui": "^2.14.1",
     "vue": "^2.6.12"
   },
   "devDependencies": {
     "@vue/cli-plugin-babel": "~4.5.0",
     "@vue/cli-plugin-typescript": "^4.5.0",
     "@vue/cli-service": "~4.5.0",
-    "babel-plugin-import": "^1.13.1",
-    "element-ui": "^2.14.0",
+    "babel-plugin-import": "^1.13.3",
+    "element-ui": "^2.14.1",
     "json-editor-vue": "^0.0.4",
-    "sass": "^1.29.0",
-    "sass-loader": "^10.0.0",
-    "typescript": "^4.0.0",
+    "sass": "^1.30.0",
+    "sass-loader": "^10.1.0",
+    "typescript": "^4.1.0",
     "vue": "^2.6.12",
     "vue-template-compiler": "^2.6.12"
   }

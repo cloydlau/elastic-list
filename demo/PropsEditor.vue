@@ -7,7 +7,10 @@
         <json-editor-vue v-model="value.elTableProps"/>
       </el-form-item>
       <el-form-item label="animate">
-        <el-input v-model="value.animate" clearable/>
+        <el-radio v-model="animateType__" label="string">string</el-radio>
+        <el-radio v-model="animateType__" label="array">array</el-radio>
+        <el-input v-model="value.animate" clearable v-if="typeof value.animate==='string'"/>
+        <json-editor-vue v-else v-model="value.animate"/>
       </el-form-item>
       <el-form-item label="watchValue">
         <el-switch v-model="value.watchValue"
@@ -29,14 +32,15 @@
       </el-form-item>
       <template v-show="!value.disabled">
         <el-form-item label="count">
-          <el-radio v-model="countType__" label="Number">Number</el-radio>
-          <el-radio v-model="countType__" label="Array">Array</el-radio>
-          <el-input-number v-model="value.count" clearable :min="1" v-if="countType__==='Number'"/>
-          <el-slider v-else
-                     v-model="value.count"
-                     range
-                     show-stops
-                     :max="5"
+          <el-radio v-model="countType__" label="number">number</el-radio>
+          <el-radio v-model="countType__" label="array">array</el-radio>
+          <el-input-number v-model="value.count" clearable :min="1" v-if="countType__==='number'"/>
+          <el-slider
+            v-else
+            v-model="value.count"
+            range
+            show-stops
+            :max="5"
           />
         </el-form-item>
         <el-form-item label="rowTemplate">
@@ -59,8 +63,9 @@ export default {
   components: { JsonEditorVue },
   data () {
     return {
-      countType__: 'Number',
-      rowTemplateType__: 'Object',
+      countType__: 'number',
+      animateType__: 'array',
+      rowTemplateType__: 'object',
       elTableProps__: {
         border: true,
         fit: true,

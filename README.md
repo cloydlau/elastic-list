@@ -49,7 +49,7 @@ Vue.use(ElasticList)
 
 ### Quick Start
 
-Example for tables:
+**Example for tables**
 
 ```html
 <ElasticList v-model="value" :elTableProps="{}">
@@ -103,7 +103,7 @@ Example for tables:
 
 <br/>
 
-Example for lists:
+**Example for lists**
 
 - reference-type array
 
@@ -164,7 +164,7 @@ Example for lists:
 
 <br/>
 
-props: 
+**props**
 
 | Attribute | Description | Configuration Mode | Type | Accepted Values | Default |
 | --- | --- | --- | --- | --- | --- |
@@ -176,11 +176,11 @@ props:
 | count | 行数限制 | global，props | number, array | *see below* | |
 | rowTemplate | 新增加row对应的模板 | global，props | object, function | *see below* | {} / '' |
 | watchValue | 是否监听value的变化 | global，props | boolean | *see below* | true |
-| animate | 添加行时的动画名称（列表形式） | global，props | string | https://animate.style （不需要动画请传空字符串） | 'zoomIn' |
+| animate | 添加/删除行时的动画名称（列表形式） | global，props | string, array | *see below* | 'zoomIn' |
 
 <br/>
 
-elTableProps:
+**elTableProps**
 
 默认值：
 
@@ -197,7 +197,7 @@ elTableProps:
 
 <br/>
 
-sortablejsProps:
+**sortablejsProps**
 
 默认值：
 
@@ -213,7 +213,7 @@ sortablejsProps:
 
 <br/>
 
-count:
+**count**
 
 比如你想限制不能超过5行：
 
@@ -233,7 +233,7 @@ Vue.use(ElasticList, {
 
 <br/>
 
-rowTemplate:
+**rowTemplate**
 
 > 如果value[0]的类型是string 则默认值为'' 否则为{}
 
@@ -249,7 +249,7 @@ Vue.use(ElasticList, {
 
 <br/>
 
-watchValue:
+**watchValue**
 
 因为除了手动的增减、排序会改变value以外 value还有被编码式设值的情况 如没有可以将watchValue设为false以提升性能
 
@@ -267,7 +267,22 @@ axios.post().finally(() => { this.loading = false })
 
 <br/>
 
-slots:
+**animate**
+
+> 仅限列表模式
+
+- string: 指定添加行时的动画名称 如```'zoomIn'```
+- array: 指定添加和删除行时的动画名称 如```['zoomIn', 'zoomOut']```
+
+默认值：```'zoomIn'```
+
+可选值：https://animate.style
+
+不需要动画：```''```
+
+<br/>
+
+**slots**
 
 | name | Description |
 | --- | --- |
@@ -277,7 +292,7 @@ slots:
 
 <br/>
 
-拖动触发范围
+**拖动触发范围**
 
 默认是整行均可以拖动 如果你想要指定触发元素：
 

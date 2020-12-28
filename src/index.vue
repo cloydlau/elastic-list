@@ -2,7 +2,7 @@
   <div :id="id" class="elastic-list" v-if="show">
     <!--<div v-for="v of value">{{v}}</div>-->
     <template v-if="isTable">
-      <el-table :data="value__" v-bind="ElTableProps">
+      <el-table :data="value__" v-bind="ElTableProps" v-on="$listeners">
         <slot/>
         <slot
           name="operation-column"
@@ -35,7 +35,9 @@
     <template v-else>
       <transition-group
         class="list-wrapper"
-        :enter-active-class="Animate&&adding?`animate__animated animate__${Animate}`:''">
+        :enter-active-class="activeClass[0]&&adding?`animate__animated animate__${activeClass[0]}`:''"
+        :leave-active-class="activeClass[1]?`animate__animated animate__${activeClass[1]}`:''"
+      >
         <div v-for="(v,i) of value__" :key="value__[i][rowKey]">
           <slot
             :i="i"
@@ -92,9 +94,7 @@ export default {
     value: {
       validator: value => ['null', 'array'].includes(typeOf(value)),
     },
-    count: {
-      type: [Number, Array]
-    },
+    count: [Number, Array],
     rowTemplate: {},
     elTableProps: Object,
     sortablejsProps: Object,
@@ -108,11 +108,12 @@ export default {
     watchValue: {
       validator: value => ['boolean'].includes(typeOf(value)),
     },
-    animate: String
+    animate: [String, Array]
   },
   computed: {
-    Animate () {
-      return getFinalProp(animate, this.animate, 'zoomIn')
+    activeClass () {
+      const result = getFinalProp(animate, this.animate, 'zoomIn')
+      return typeof result === 'string' ? [result] : result
     },
     canAppend () {
       return !this.Disabled && (!this.maxRow || this.value?.length < this.maxRow)
@@ -340,6 +341,7 @@ export default {
 <style lang="scss" scoped>
 .elastic-list {
   user-select: none;
+  cursor: move;
 
   .append-row-btn {
     width: 100%;
