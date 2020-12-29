@@ -33,7 +33,7 @@ element-ui集成说明：
 $ yarn add elastic-list
 ```
 
-**Dependencies**：vue element-ui
+**Dependencies**：vue element-ui?
 
 ```js
 import ElasticList from 'elastic-list'
