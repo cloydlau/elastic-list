@@ -1,6 +1,6 @@
 {
   "name": "elastic-list",
-  "version": "0.1.2",
+  "version": "0.1.3",
   "author": "cloydlau",
   "license": "MIT",
   "description": "A drag-and-drop & editable table, custom list supported.",
