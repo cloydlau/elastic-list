@@ -91,16 +91,6 @@ Vue.use(ElasticList)
   </ElasticList>
   ```
 
-- 监听el-table事件
-
-  ```
-  <ElasticList ref="elasticList"/>
-  
-  this.$refs.elasticList.$children[0].$on('row-click', e => {
-    console.log(e)
-  })
-  ```
-
 <br/>
 
 **Example for lists**
@@ -174,7 +164,7 @@ Vue.use(ElasticList)
 | sortable | 是否开启拖拉拽排序 | global，props | boolean | | true |
 | disabled | 禁用模式下无法新增、删除、排序 | global，props | boolean | | false |
 | count | 行数限制 | global，props | number, array | *see below* | |
-| rowTemplate | 新增加row对应的模板 | global，props | object, function | *see below* | {} / '' |
+| rowTemplate | 新增row对应的模板 | global，props | object, function | *see below* | {} / '' |
 | watchValue | 是否监听value的变化 | global，props | boolean | *see below* | true |
 | animate | 添加/删除行时的动画名称（列表形式） | global，props | string, array | *see below* | 'zoomIn' |
 

@@ -61,6 +61,16 @@ export default {
     value: Object
   },
   components: { JsonEditorVue },
+  watch: {
+    animateType__: {
+      immediate: true,
+      handler (newVal) {
+        if (newVal === 'array' && !this.value.animate) {
+          this.value.animate = []
+        }
+      }
+    }
+  },
   data () {
     return {
       countType__: 'number',

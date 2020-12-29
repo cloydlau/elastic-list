@@ -6,7 +6,6 @@
       :sortablejsProps="{handle:'.handle'}"
       :row-template="rowTemplate"
       ref="elasticList"
-      @select="onSelect"
     >
       <el-table-column type="index">
         <template slot-scope="scope">
@@ -64,9 +63,6 @@ export default {
     set () {
       this.value = Array.from(Array(3), (v, i) => ({ name: i + 10 }))
     },
-    onSelect (e) {
-      console.log(e)
-    }
   }
 }
 </script>
