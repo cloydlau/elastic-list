@@ -100,7 +100,7 @@ Vue.use(ElasticList)
   ```html
   <el-form :model="form">
     <ElasticList v-model="form.list">
-      <template v-slot="{v,i,showDelBtn,deleteRow}">
+      <template v-slot="{item,i,showDelBtn,deleteRow}">
         <div>
   
           <!-- delete button -->
@@ -112,10 +112,10 @@ Vue.use(ElasticList)
   
           <!-- editable elements -->
           <el-form-item label="名称" :prop="'list.' + i + '.name'">
-            <el-input v-model="v.name"/>
+            <el-input v-model="item.name"/>
           </el-form-item>
           <el-form-item label="排序" :prop="'list.' + i + '.sort'">
-            <el-input-number v-model="v.sort"/>
+            <el-input-number v-model="item.sort"/>
           </el-form-item>
   
         </div>
@@ -135,7 +135,7 @@ Vue.use(ElasticList)
         showDelBtn: {boolean} 是否显示删除按钮
         deleteRow: {function} 删除行
     -->
-    <template v-slot="{v,i,showDelBtn,deleteRow}">
+    <template v-slot="{item,i,showDelBtn,deleteRow}">
       <div>
   
         <!-- row contents -->
