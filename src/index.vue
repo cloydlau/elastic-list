@@ -1,7 +1,7 @@
 <template>
   <div :id="id" class="elastic-list" v-if="show">
     <!--<div v-for="v of value">{{v}}</div>-->
-    <template v-if="isTable">
+    <template v-if="mode === 'elTable'">
       <el-table :data="value__" v-bind="ElTableProps" v-on="$listeners">
         <slot/>
         <slot
@@ -61,11 +61,12 @@
 </template>
 
 <script>
+import Vue from 'vue'
 import 'animate.css'
 import { cloneDeep, isPlainObject } from 'lodash'
 import uuidv1 from 'uuid/dist/esm-browser/v1'
 import { sortable, elTableProps, disabled, count, rowTemplate, watchValue, animate, sortablejsProps } from './config'
-import { typeOf } from 'plain-kit'
+import { typeOf } from 'kayran'
 
 /**
  * 参数有全局参数、实例参数和默认值之分 取哪个取决于用户传了哪个：
@@ -100,13 +101,14 @@ export default {
     sortablejsProps: Object,
     disabled: {
       // 不能用type 因为type为Boolean时 如果用户没传 默认值为false而不是undefined 会影响getFinalProp的判断
-      validator: value => ['boolean'].includes(typeOf(value)),
+      // 由此带来的副作用：如果使用者只是书写了该属性但并没有显式指定其值为true的话 其值为''
+      validator: value => value === '' || ['boolean'].includes(typeOf(value)),
     },
     sortable: {
-      validator: value => ['boolean'].includes(typeOf(value)),
+      validator: value => value === '' || ['boolean'].includes(typeOf(value)),
     },
     watchValue: {
-      validator: value => ['boolean'].includes(typeOf(value)),
+      validator: value => value === '' || ['boolean'].includes(typeOf(value)),
     },
     animate: [String, Array]
   },
@@ -133,8 +135,14 @@ export default {
           {}),
       }
     },
-    isTable () {
-      return this.$slots.default && this.$slots.default[0]?.tag.includes('ElTableColumn')
+    mode () {
+      if (this.$slots.default?.[0]?.tag.includes('ElTableColumn')) {
+        return 'elTable'
+      } else if (this.$slots.default?.[0]?.tag.includes('ElTransfer')) {
+        return 'elTransfer'
+      } else {
+        return 'list'
+      }
     },
     SortablejsProps () {
       return {
@@ -146,10 +154,10 @@ export default {
     },
     Sortable () {
       return this.Disabled ? false :
-        getFinalProp(sortable, this.sortable, true)
+        getFinalProp(sortable, this.sortable === '' ? true : this.sortable, true)
     },
     Disabled () {
-      return getFinalProp(disabled, this.disabled, this.elForm?.disabled)
+      return getFinalProp(disabled, this.disabled === '' ? true : this.disabled, this.elForm?.disabled)
     },
     RowTemplate () {
       return getFinalProp(rowTemplate, this.rowTemplate, typeof this.value?.[0] === 'string' ? '' : {})
@@ -180,7 +188,8 @@ export default {
       adding: false,
       unWatchValue: null,
       id: 'elastic-list-' + uuidv1(),
-      WatchValue: undefined
+      WatchValue: undefined,
+      transferring: false
     }
   },
   watch: {
@@ -217,15 +226,15 @@ export default {
     },
     watchValue: {
       immediate: true,
-      handler (newVal) {
-        const unWatchValue = this.$watch('value', newVal => {
+      handler (newWatchValue) {
+        const unWatchValue = this.$watch('value', newValue => {
           // 内部同步
           if (this.synchronizing) {
             this.synchronizing = false
           }
           // 外部设值
-          else if (newVal) {
-            this.value__ = newVal.map(v => ({
+          else if (newValue) {
+            this.value__ = newValue.map(v => ({
               [this.rowKey]: uuidv1(),
               ...isPlainObject(v) && v
             }))
@@ -235,11 +244,45 @@ export default {
           deep: true
         })
 
-        this.WatchValue = getFinalProp(watchValue, newVal, true)
+        this.WatchValue = getFinalProp(watchValue, newWatchValue === '' ? true : newWatchValue, true)
         if (!this.WatchValue) {
           unWatchValue()
         }
       }
+    }
+  },
+  mounted () {
+    if (this.SortablejsProps.group) {
+      if (!Vue.prototype.eventBus__) {
+        Vue.prototype.eventBus__ = new Vue({
+          methods: {
+            emit (event, ...args) {
+              this.$emit(event, ...args)
+            },
+            on (event, callback) {
+              this.$on(event, callback)
+            },
+            off (event, callback) {
+              this.$off(event, callback)
+            }
+          }
+        })
+      }
+
+      this.eventBus__.on('transfer', (oldDraggableValue, oldDraggableValue__, newDraggableIndex) => {
+        if (this.transferring) {
+          this.transferring = false
+        } else {
+          const copy = cloneDeep(this.value__)
+          copy.splice(newDraggableIndex, 0, oldDraggableValue__)
+          this.value__ = copy
+          if (this.mode !== 'elTable') {
+            const value = cloneDeep(this.value)
+            value.splice(newDraggableIndex, 0, oldDraggableValue)
+            this.sync(value)
+          }
+        }
+      })
     }
   },
   /*updated () {
@@ -274,30 +317,78 @@ export default {
     sort () {
       if (this.Sortable) {
         const Sortable = require('sortablejs').default //(await import('sortablejs')).default 在生产环境报错
-        const el = document.querySelector('#' + this.id + (this.isTable ? ' tbody' : ' .list-wrapper'))
+        const el = document.querySelector('#' + this.id + (this.mode === 'elTable' ? ' tbody' : ' .list-wrapper'))
         this.sortablejs = Sortable.create(el, {
           ...this.SortablejsProps,
-          onStart: () => {
+          onStart: e => {
             this.sorting = true
+            this.SortablejsProps.onStart?.(e)
+            this.$emit('start', e)
           },
-          onEnd: ({ newIndex, oldIndex }) => {
+          onEnd: e => {
+            this.$nextTick(() => {
+              this.sorting = false
+            })
+            this.SortablejsProps.onEnd?.(e)
+            this.$emit('end', e)
+          },
+          onUpdate: e => {
+            const { newDraggableIndex, oldDraggableIndex } = e
             const copy = cloneDeep(this.value__)
-            copy.splice(newIndex, 0, copy.splice(oldIndex, 1)[0])
+            copy.splice(newDraggableIndex, 0, copy.splice(oldDraggableIndex, 1)[0])
             //fix: 视图不更新
             //this.value__ = []
             //this.$nextTick(() => {
             this.value__ = copy
 
-            if (!this.isTable) {
+            if (this.mode !== 'elTable') {
               const value = cloneDeep(this.value)
-              value.splice(newIndex, 0, value.splice(oldIndex, 1)[0])
+              value.splice(newDraggableIndex, 0, value.splice(oldDraggableIndex, 1)[0])
               this.sync(value)
             }
-
-            this.$nextTick(() => {
-              this.sorting = false
-            })
-            //})
+            this.SortablejsProps.onUpdate?.(e)
+            this.$emit('update', e)
+          },
+          onAdd: e => {
+            //this.transfer()
+            this.SortablejsProps.onAdd?.(e)
+            this.$emit('add', e)
+          },
+          onRemove: e => {
+            const { newDraggableIndex, oldDraggableIndex } = e
+            this.transferring = true
+            this.eventBus__.emit('transfer', this.value[oldDraggableIndex], this.value__[oldDraggableIndex], newDraggableIndex)
+            this.deleteRow(e.oldDraggableIndex)
+            this.SortablejsProps.onRemove?.(e)
+            this.$emit('remove', e)
+          },
+          onChoose: e => {
+            this.SortablejsProps.onChoose?.(e)
+            this.$emit('choose', e)
+          },
+          onUnchoose: e => {
+            this.SortablejsProps.onUnchoose?.(e)
+            this.$emit('unchoose', e)
+          },
+          onSort: e => {
+            this.SortablejsProps.onSort?.(e)
+            this.$emit('sort', e)
+          },
+          onFilter: e => {
+            this.SortablejsProps.onFilter?.(e)
+            this.$emit('filter', e)
+          },
+          onMove: e => {
+            this.SortablejsProps.onMove?.(e)
+            this.$emit('move', e)
+          },
+          onClone: e => {
+            this.SortablejsProps.onClone?.(e)
+            this.$emit('clone', e)
+          },
+          onChange: e => {
+            this.SortablejsProps.onChange?.(e)
+            //this.$emit('change', e)
           }
         })
       }
@@ -308,9 +399,9 @@ export default {
         this.RowTemplate
       this.value__.push({
         [this.rowKey]: uuidv1(),
-        ...this.isTable && template
+        ...this.mode === 'elTable' && template
       })
-      if (!this.isTable) {
+      if (this.mode !== 'elTable') {
         this.sync([
           ...cloneDeep(this.value),
           template
@@ -322,7 +413,7 @@ export default {
     },
     deleteRow (index) {
       this.value__.splice(index, 1)
-      if (!this.isTable) {
+      if (this.mode !== 'elTable') {
         const value = cloneDeep(this.value)
         value.splice(index, 1)
         this.sync(value)
@@ -340,8 +431,10 @@ export default {
 
 <style lang="scss" scoped>
 .elastic-list {
-  user-select: none;
-  cursor: move;
+  .list-wrapper > div {
+    user-select: none;
+    cursor: move;
+  }
 
   .append-row-btn {
     width: 100%;

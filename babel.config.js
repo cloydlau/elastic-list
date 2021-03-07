@@ -8,11 +8,5 @@ module.exports = {
       'libraryDirectory': '',
       'camel2DashComponentName': false,
     }, 'lodash'],
-    ['import', {
-      libraryName: 'plain-kit',
-      libraryDirectory: 'lib',
-      style: false,
-      camel2DashComponentName: false
-    }, 'plain-kit']
   ]
 }

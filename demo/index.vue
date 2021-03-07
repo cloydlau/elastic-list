@@ -10,6 +10,9 @@
       <el-tab-pane label="列表形式（引用类型数组）">
         <RefTypeList :props="props"/>
       </el-tab-pane>
+      <el-tab-pane label="行内形式">
+        <Inline :props="props"/>
+      </el-tab-pane>
     </el-tabs>
 
     <br/><br/><br/>
@@ -22,9 +25,10 @@ import Table from './Table'
 import ValueTypeList from './ValueTypeList'
 import RefTypeList from './RefTypeList'
 import PropsEditor from './PropsEditor'
+import Inline from './Inline'
 
 export default {
-  components: { Table, ValueTypeList, RefTypeList, PropsEditor },
+  components: { Table, ValueTypeList, RefTypeList, Inline, PropsEditor },
   data () {
     return {
       props: {
@@ -42,6 +46,6 @@ export default {
 
 <style lang="scss" scoped>
 ::v-deep .el-dialog {
-  min-width: 600px;
+  min-width: 800px;
 }
 </style>
