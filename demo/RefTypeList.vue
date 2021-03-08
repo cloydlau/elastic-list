@@ -25,6 +25,9 @@
     </el-form>
 
     <br/>
+    <el-button @click="form.list.push({})" style="width:100%">push（编程式设值）</el-button>
+
+    <br/><br/>
     <JsonEditorVue :value="form.list"/>
   </div>
 </template>

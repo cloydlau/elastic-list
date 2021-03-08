@@ -34,11 +34,11 @@
 
     <template v-else>
       <transition-group
-        class="list-wrapper"
+        class="list"
         :enter-active-class="activeClass[0]&&adding?`animate__animated animate__${activeClass[0]}`:''"
         :leave-active-class="activeClass[1]?`animate__animated animate__${activeClass[1]}`:''"
       >
-        <div v-for="(v,i) of value__" :key="value__[i][rowKey]">
+        <div v-for="(v,i) of value__" :key="value__[i][rowKey]" class="item">
           <slot
             :i="i"
             :v="v"
@@ -47,6 +47,9 @@
             :deleteRow="deleteRow"
           />
         </div>
+        <span v-show="!value||value.length===0" :key="'empty'">
+          <slot name="empty"/>
+        </span>
       </transition-group>
       <span
         v-if="!Disabled"
@@ -189,21 +192,25 @@ export default {
       unWatchValue: null,
       id: 'elastic-list-' + uuidv1(),
       WatchValue: undefined,
-      transferring: false
+      transferring: false,
+      valueChanged: false
     }
   },
   watch: {
     value__: {
       deep: true,
       handler (newVal, oldVal) {
+        console.log('value__')
         //if (this.synchronizing) {
         //  this.synchronizing = false
         //} else {
         //if (!isEqualWith(newVal, this.value)) {
-        this.WatchValue && this.sync(cloneDeep(newVal).map(v => {
-          delete v[this.rowKey]
-          return v
-        }))
+        if (this.WatchValue) {
+          this.sync(cloneDeep(newVal).map(v => {
+            delete v[this.rowKey]
+            return v
+          }))
+        }
         //this.$emit('input', newVal)
         //}
         //}
@@ -233,10 +240,11 @@ export default {
             this.synchronizing = false
           }
           // 外部设值
-          else if (newValue) {
-            this.value__ = newValue.map(v => ({
+          else {
+            console.log('value')
+            this.value__ = newValue?.map(v => ({
+              ...isPlainObject(v) && v,
               [this.rowKey]: uuidv1(),
-              ...isPlainObject(v) && v
             }))
           }
         }, {
@@ -273,14 +281,14 @@ export default {
         if (this.transferring) {
           this.transferring = false
         } else {
-          const copy = cloneDeep(this.value__)
-          copy.splice(newDraggableIndex, 0, oldDraggableValue__)
-          this.value__ = copy
-          if (this.mode !== 'elTable') {
+          //const copy = cloneDeep(this.value__)
+          //copy.splice(newDraggableIndex, 0, oldDraggableValue__)
+          this.value__.splice(newDraggableIndex, 0, oldDraggableValue__)
+          /*if (this.mode !== 'elTable') {
             const value = cloneDeep(this.value)
             value.splice(newDraggableIndex, 0, oldDraggableValue)
             this.sync(value)
-          }
+          }*/
         }
       })
     }
@@ -317,7 +325,7 @@ export default {
     sort () {
       if (this.Sortable) {
         const Sortable = require('sortablejs').default //(await import('sortablejs')).default 在生产环境报错
-        const el = document.querySelector('#' + this.id + (this.mode === 'elTable' ? ' tbody' : ' .list-wrapper'))
+        const el = document.querySelector('#' + this.id + (this.mode === 'elTable' ? ' tbody' : ' .list'))
         this.sortablejs = Sortable.create(el, {
           ...this.SortablejsProps,
           onStart: e => {
@@ -341,11 +349,11 @@ export default {
             //this.$nextTick(() => {
             this.value__ = copy
 
-            if (this.mode !== 'elTable') {
+            /*if (this.mode !== 'elTable') {
               const value = cloneDeep(this.value)
               value.splice(newDraggableIndex, 0, value.splice(oldDraggableIndex, 1)[0])
               this.sync(value)
-            }
+            }*/
             this.SortablejsProps.onUpdate?.(e)
             this.$emit('update', e)
           },
@@ -401,23 +409,23 @@ export default {
         [this.rowKey]: uuidv1(),
         ...this.mode === 'elTable' && template
       })
-      if (this.mode !== 'elTable') {
+      /*if (this.mode !== 'elTable') {
         this.sync([
           ...cloneDeep(this.value),
           template
         ])
-      }
+      }*/
       this.$nextTick(() => {
         this.adding = false
       })
     },
     deleteRow (index) {
       this.value__.splice(index, 1)
-      if (this.mode !== 'elTable') {
+      /*if (this.mode !== 'elTable') {
         const value = cloneDeep(this.value)
         value.splice(index, 1)
         this.sync(value)
-      }
+      }*/
     },
     /*getUuid (obj) {
       if (!this.weakMap.has(obj)) {
@@ -431,9 +439,14 @@ export default {
 
 <style lang="scss" scoped>
 .elastic-list {
-  .list-wrapper > div {
-    user-select: none;
-    cursor: move;
+  .list {
+    display: block;
+    height: 100%;
+
+    & > .item {
+      user-select: none;
+      cursor: move;
+    }
   }
 
   .append-row-btn {
