@@ -10,19 +10,16 @@
       >
 
         <template v-slot="{item,i,showDelBtn,deleteRow}">
-          <div class="row" :style="{backgroundColor:item.bg}"/>
+          <div @click="to2(i,deleteRow)" class="row" :style="{backgroundColor:item.bg}"/>
         </template>
 
-        <div slot="empty">empty</div>
+        <div slot="placeholder">placeholder</div>
 
         <div slot="append-row-btn"/>
 
       </ElasticList>
 
       <br/>
-      <el-button @click="value1.push({bg:''})" style="width:100%">push（编程式设值）</el-button>
-
-      <br/><br/>
       <JsonEditorVue :value="value1"/>
     </div>
 
@@ -36,19 +33,16 @@
       >
 
         <template v-slot="{item,i,showDelBtn,deleteRow}">
-          <div class="row" :style="{backgroundColor:item.bg}"/>
+          <div @click="to1(i,deleteRow)" class="row" :style="{backgroundColor:item.bg}"/>
         </template>
 
-        <div slot="empty">empty</div>
+        <div slot="placeholder">placeholder</div>
 
         <div slot="append-row-btn"/>
 
       </ElasticList>
 
       <br/>
-      <el-button @click="value2.push({bg:''})" style="width:100%">push（编程式设值）</el-button>
-
-      <br/><br/>
       <JsonEditorVue :value="value2"/>
     </div>
   </div>
@@ -66,6 +60,16 @@ export default {
       value2: [{ bg: '#5d513c' }, { bg: '#9b4400' }, { bg: '#1bd1a5' }, { bg: '#ff0097' }],
     }
   },
+  methods: {
+    to2 (i, deleteRow) {
+      deleteRow(i)
+      this.value2.push(this.value1[i])
+    },
+    to1 (i, deleteRow) {
+      deleteRow(i)
+      this.value1.push(this.value2[i])
+    },
+  }
 }
 </script>
 

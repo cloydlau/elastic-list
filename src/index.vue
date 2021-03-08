@@ -33,7 +33,7 @@
     </template>
 
     <template v-else>
-      <transition-group
+      <div
         class="list"
         :enter-active-class="activeClass[0]&&adding?`animate__animated animate__${activeClass[0]}`:''"
         :leave-active-class="activeClass[1]?`animate__animated animate__${activeClass[1]}`:''"
@@ -47,10 +47,10 @@
             :deleteRow="deleteRow"
           />
         </div>
-        <span v-show="!value||value.length===0" :key="'empty'">
-          <slot name="empty"/>
+        <span v-show="!value||value.length===0" :key="'placeholder'">
+          <slot name="placeholder"/>
         </span>
-      </transition-group>
+      </div>
       <span
         v-if="!Disabled"
         @click="appendRow"
@@ -177,6 +177,9 @@ export default {
         return globalCount[0]
       }
     },
+    isValueTypeArray () {
+      return !isPlainObject(this.value?.[0])
+    }
   },
   data () {
     return {
@@ -193,7 +196,6 @@ export default {
       id: 'elastic-list-' + uuidv1(),
       WatchValue: undefined,
       transferring: false,
-      valueChanged: false
     }
   },
   watch: {
@@ -205,12 +207,12 @@ export default {
         //  this.synchronizing = false
         //} else {
         //if (!isEqualWith(newVal, this.value)) {
-        if (this.WatchValue) {
-          this.sync(cloneDeep(newVal).map(v => {
-            delete v[this.rowKey]
-            return v
-          }))
-        }
+        //if (this.WatchValue) {
+        this.sync(cloneDeep(newVal).map(v => {
+          delete v[this.rowKey]
+          return v.__value === undefined ? v : v.__value
+        }))
+        //}
         //this.$emit('input', newVal)
         //}
         //}
@@ -243,7 +245,7 @@ export default {
           else {
             console.log('value')
             this.value__ = newValue?.map(v => ({
-              ...isPlainObject(v) && v,
+              ...isPlainObject(v) ? v : { __value: v },
               [this.rowKey]: uuidv1(),
             }))
           }
