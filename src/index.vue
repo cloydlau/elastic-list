@@ -68,8 +68,10 @@ import Vue from 'vue'
 import 'animate.css'
 import { cloneDeep, isPlainObject } from 'lodash'
 import uuidv1 from 'uuid/dist/esm-browser/v1'
-import { sortable, elTableProps, disabled, count, rowTemplate, watchValue, animate, sortablejsProps } from './config'
 import { typeOf } from 'kayran'
+import globalProps from './config'
+
+const { sortable, elTableProps, disabled, count, rowTemplate, animate, sortablejsProps } = globalProps
 
 /**
  * 参数有全局参数、实例参数和默认值之分 取哪个取决于用户传了哪个：
@@ -108,9 +110,6 @@ export default {
       validator: value => value === '' || ['boolean'].includes(typeOf(value)),
     },
     sortable: {
-      validator: value => value === '' || ['boolean'].includes(typeOf(value)),
-    },
-    watchValue: {
       validator: value => value === '' || ['boolean'].includes(typeOf(value)),
     },
     animate: [String, Array]
@@ -177,9 +176,6 @@ export default {
         return globalCount[0]
       }
     },
-    isValueTypeArray () {
-      return !isPlainObject(this.value?.[0])
-    }
   },
   data () {
     return {
@@ -194,8 +190,8 @@ export default {
       adding: false,
       unWatchValue: null,
       id: 'elastic-list-' + uuidv1(),
-      WatchValue: undefined,
       transferring: false,
+      isPlainObjectArray: true,
     }
   },
   watch: {
@@ -203,19 +199,12 @@ export default {
       deep: true,
       handler (newVal, oldVal) {
         console.log('value__')
-        //if (this.synchronizing) {
-        //  this.synchronizing = false
-        //} else {
-        //if (!isEqualWith(newVal, this.value)) {
-        //if (this.WatchValue) {
-        this.sync(cloneDeep(newVal).map(v => {
-          delete v[this.rowKey]
-          return v.__value === undefined ? v : v.__value
-        }))
-        //}
-        //this.$emit('input', newVal)
-        //}
-        //}
+        if (this.isPlainObjectArray) {
+          this.syncValue(cloneDeep(newVal).map(v => {
+            delete v[this.rowKey]
+            return v
+          }))
+        }
       },
     },
     Sortable: {
@@ -233,30 +222,28 @@ export default {
         })*/
       }
     },
-    watchValue: {
+    isPlainObjectArray: {
       immediate: true,
-      handler (newWatchValue) {
-        const unWatchValue = this.$watch('value', newValue => {
-          // 内部同步
-          if (this.synchronizing) {
-            this.synchronizing = false
+      handler (newVal) {
+        if (this.unWatchValue) {
+          if (!newVal) {
+            this.unWatchValue()
+            this.unWatchValue = null
           }
-          // 外部设值
-          else {
-            console.log('value')
-            this.value__ = newValue?.map(v => ({
-              ...isPlainObject(v) ? v : { __value: v },
-              [this.rowKey]: uuidv1(),
-            }))
-          }
-        }, {
-          immediate: true,
-          deep: true
-        })
-
-        this.WatchValue = getFinalProp(watchValue, newWatchValue === '' ? true : newWatchValue, true)
-        if (!this.WatchValue) {
-          unWatchValue()
+        } else {
+          this.unWatchValue = this.$watch('value', newValue => {
+            // 内部同步
+            if (this.synchronizing) {
+              this.synchronizing = false
+            }
+            // 外部设值
+            else {
+              this.mapValue(newValue)
+            }
+          }, {
+            immediate: true,
+            deep: true
+          })
         }
       }
     }
@@ -289,7 +276,7 @@ export default {
           /*if (this.mode !== 'elTable') {
             const value = cloneDeep(this.value)
             value.splice(newDraggableIndex, 0, oldDraggableValue)
-            this.sync(value)
+            this.syncValue(value)
           }*/
         }
       })
@@ -299,7 +286,23 @@ export default {
     this.dragTable()
   },*/
   methods: {
-    sync (value) {
+    mapValue (value) {
+      console.log('value')
+      this.value__ = value?.map(v => {
+        const vIsPlainObject = v && isPlainObject(v)
+        if (!vIsPlainObject) {
+          this.isPlainObjectArray = false
+        }
+        return {
+          ...vIsPlainObject && v,
+          [this.rowKey]: uuidv1(),
+        }
+      })
+    },
+    setValue (value) {
+      this.mapValue(value)
+    },
+    syncValue (value) {
       this.synchronizing = true
       this.$emit('input', value)
       // fixing: 用于el表单中 且校验触发方式为blur时 没有生效
@@ -344,17 +347,23 @@ export default {
           },
           onUpdate: e => {
             const { newDraggableIndex, oldDraggableIndex } = e
-            const copy = cloneDeep(this.value__)
-            copy.splice(newDraggableIndex, 0, copy.splice(oldDraggableIndex, 1)[0])
+            if (this.isPlainObjectArray) {
+              const copy = cloneDeep(this.value__)
+              copy.splice(newDraggableIndex, 0, copy.splice(oldDraggableIndex, 1)[0])
+              this.value__ = copy
+            } else {
+              const copy = cloneDeep(this.value)
+              copy.splice(newDraggableIndex, 0, copy.splice(oldDraggableIndex, 1)[0])
+              console.log(copy)
+              this.setValue(copy)
+            }
             //fix: 视图不更新
             //this.value__ = []
             //this.$nextTick(() => {
-            this.value__ = copy
-
             /*if (this.mode !== 'elTable') {
               const value = cloneDeep(this.value)
               value.splice(newDraggableIndex, 0, value.splice(oldDraggableIndex, 1)[0])
-              this.sync(value)
+              this.syncValue(value)
             }*/
             this.SortablejsProps.onUpdate?.(e)
             this.$emit('update', e)
@@ -407,12 +416,19 @@ export default {
       this.adding = true
       const template = this.RowTemplate instanceof Function ? this.RowTemplate(this.value__.length + 1) :
         this.RowTemplate
-      this.value__.push({
-        [this.rowKey]: uuidv1(),
-        ...this.mode === 'elTable' && template
-      })
+      if (this.isPlainObjectArray) {
+        this.value__.push({
+          [this.rowKey]: uuidv1(),
+          ...this.mode === 'elTable' && template
+        })
+      } else {
+        this.setValue([...this.value, {
+          [this.rowKey]: uuidv1(),
+          ...this.mode === 'elTable' && template
+        }])
+      }
       /*if (this.mode !== 'elTable') {
-        this.sync([
+        this.syncValue([
           ...cloneDeep(this.value),
           template
         ])
@@ -422,11 +438,17 @@ export default {
       })
     },
     deleteRow (index) {
-      this.value__.splice(index, 1)
+      if (this.isPlainObjectArray) {
+        this.value__.splice(index, 1)
+      } else {
+        const copy = cloneDeep(this.value)
+        copy.splice(index, 1)
+        this.setValue(copy)
+      }
       /*if (this.mode !== 'elTable') {
         const value = cloneDeep(this.value)
         value.splice(index, 1)
-        this.sync(value)
+        this.syncValue(value)
       }*/
     },
     /*getUuid (obj) {

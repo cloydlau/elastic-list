@@ -5,7 +5,7 @@
       v-bind="$attrs.props"
       :row-template="rowTemplate"
       v-if="!loading"
-      :watchValue="false"
+      ref="elasticList"
     >
       <template v-slot="{item,i,showDelBtn,deleteRow}">
         <div class="row">
@@ -20,6 +20,9 @@
     </ElasticList>
 
     <br/>
+    <el-button @click="setValue" style="width:100%">push（编程式设值）</el-button>
+
+    <br/><br/>
     <JsonEditorVue :value="value"/>
   </div>
 </template>
@@ -43,6 +46,11 @@ export default {
       this.loading = false
     }, 500)
   },
+  methods: {
+    setValue () {
+      this.$refs.elasticList.setValue([...this.value, '1'])
+    }
+  }
 }
 </script>
 
