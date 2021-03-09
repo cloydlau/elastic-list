@@ -47,9 +47,9 @@
             :deleteRow="deleteRow"
           />
         </div>
-        <span v-show="!value||value.length===0" :key="'placeholder'">
+        <div class="placeholder" v-show="!value||value.length===0" :key="'placeholder'">
           <slot name="placeholder"/>
-        </span>
+        </div>
       </div>
       <span
         v-if="!Disabled"
@@ -464,13 +464,23 @@ export default {
 
 <style lang="scss" scoped>
 .elastic-list {
+  height: 100%;
+
   .list {
     display: block;
     height: 100%;
+    position: relative;
 
     & > .item {
       user-select: none;
       cursor: move;
+      position: relative;
+    }
+
+    & > .placeholder {
+      position: absolute;
+      top: 0;
+      left: 0;
     }
   }
 

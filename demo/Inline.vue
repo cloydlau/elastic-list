@@ -1,44 +1,46 @@
 <template>
   <div class="inline">
     <div>
-      <ElasticList
-        v-model="value1"
-        v-bind="$attrs.props"
-        group="x"
-      >
+      <div>
+        <ElasticList
+          v-model="value1"
+          v-bind="$attrs.props"
+          group="x"
+        >
 
-        <template v-slot="{item,i,showDelBtn,deleteRow}">
-          <div @click="to2(i,deleteRow)" class="row" :style="{backgroundColor:item.bg}"/>
-        </template>
+          <template v-slot="{item,i,showDelBtn,deleteRow}">
+            <div @click="to2(i,deleteRow)" class="row" :style="{backgroundColor:item.bg}"/>
+          </template>
 
-        <div slot="placeholder">placeholder</div>
+          <div slot="placeholder">placeholder</div>
 
-        <div slot="append-row-btn"/>
+          <div slot="append-row-btn"/>
 
-      </ElasticList>
+        </ElasticList>
+      </div>
 
-      <br/>
       <JsonEditorVue :value="value1"/>
     </div>
 
     <div>
-      <ElasticList
-        v-model="value2"
-        v-bind="$attrs.props"
-        group="x"
-      >
+      <div>
+        <ElasticList
+          v-model="value2"
+          v-bind="$attrs.props"
+          group="x"
+        >
 
-        <template v-slot="{item,i,showDelBtn,deleteRow}">
-          <div @click="to1(i,deleteRow)" class="row" :style="{backgroundColor:item.bg}"/>
-        </template>
+          <template v-slot="{item,i,showDelBtn,deleteRow}">
+            <div @click="to1(i,deleteRow)" class="row" :style="{backgroundColor:item.bg}"/>
+          </template>
 
-        <div slot="placeholder">placeholder</div>
+          <div slot="placeholder">placeholder</div>
 
-        <div slot="append-row-btn"/>
+          <div slot="append-row-btn"/>
 
-      </ElasticList>
+        </ElasticList>
+      </div>
 
-      <br/>
       <JsonEditorVue :value="value2"/>
     </div>
   </div>
@@ -85,8 +87,9 @@ export default {
   & > div {
     flex: 1;
 
-    & > .elastic-list {
+    & > div:first-child {
       height: 416px;
+      margin-bottom: 3rem;
     }
 
     &:first-child {
