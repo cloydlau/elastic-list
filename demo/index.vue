@@ -37,7 +37,6 @@ export default {
         disabled: false,
         count: [1, 5],
         elTableProps: {},
-        watchValue: true
       },
     }
   },

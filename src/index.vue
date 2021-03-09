@@ -147,11 +147,16 @@ export default {
       }
     },
     SortablejsProps () {
+      let result = {}
+      Object.keys(this.$attrs).filter(v => !Object.keys(this.$props).includes(v)).map(v => {
+        result[v] = this.$attrs[v]
+      })
       return {
         filter: 'input,.el-rate',
         preventOnFilter: false,
         animation: 500,
-        ...getFinalProp(sortablejsProps, this.sortablejsProps)
+        ...getFinalProp(sortablejsProps, this.sortablejsProps), // todo: deprecated
+        ...result,
       }
     },
     Sortable () {
@@ -162,7 +167,7 @@ export default {
       return getFinalProp(disabled, this.disabled === '' ? true : this.disabled, this.elForm?.disabled)
     },
     RowTemplate () {
-      return getFinalProp(rowTemplate, this.rowTemplate, typeof this.value?.[0] === 'string' ? '' : {})
+      return getFinalProp(rowTemplate, this.rowTemplate, this.isPlainObjectArray ? {} : '')
     },
     maxRow () {
       const globalCount = this.count || count
@@ -198,7 +203,6 @@ export default {
     value__: {
       deep: true,
       handler (newVal, oldVal) {
-        console.log('value__')
         if (this.isPlainObjectArray) {
           this.syncValue(cloneDeep(newVal).map(v => {
             delete v[this.rowKey]
@@ -287,7 +291,6 @@ export default {
   },*/
   methods: {
     mapValue (value) {
-      console.log('value')
       this.value__ = value?.map(v => {
         const vIsPlainObject = v && isPlainObject(v)
         if (!vIsPlainObject) {
@@ -300,6 +303,7 @@ export default {
       })
     },
     setValue (value) {
+      this.syncValue(value)
       this.mapValue(value)
     },
     syncValue (value) {
@@ -354,7 +358,6 @@ export default {
             } else {
               const copy = cloneDeep(this.value)
               copy.splice(newDraggableIndex, 0, copy.splice(oldDraggableIndex, 1)[0])
-              console.log(copy)
               this.setValue(copy)
             }
             //fix: 视图不更新
@@ -407,7 +410,7 @@ export default {
           },
           onChange: e => {
             this.SortablejsProps.onChange?.(e)
-            //this.$emit('change', e)
+            this.$emit('change', e)
           }
         })
       }
@@ -422,10 +425,8 @@ export default {
           ...this.mode === 'elTable' && template
         })
       } else {
-        this.setValue([...this.value, {
-          [this.rowKey]: uuidv1(),
-          ...this.mode === 'elTable' && template
-        }])
+        const newValue = [...this.value, template]
+        this.setValue(newValue)
       }
       /*if (this.mode !== 'elTable') {
         this.syncValue([

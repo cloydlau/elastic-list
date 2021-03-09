@@ -9,14 +9,8 @@
       <el-form-item label="animate">
         <el-radio v-model="animateType__" label="string">string</el-radio>
         <el-radio v-model="animateType__" label="array">array</el-radio>
-        <el-input v-model="value.animate" clearable v-if="typeof value.animate==='string'"/>
+        <el-input v-model="value.animate" clearable v-if="animateType__==='string'"/>
         <json-editor-vue v-else v-model="value.animate"/>
-      </el-form-item>
-      <el-form-item label="watchValue">
-        <el-switch v-model="value.watchValue"
-                   :active-value="true"
-                   :inactive-value="false">
-        </el-switch>
       </el-form-item>
       <el-form-item label="sortable">
         <el-switch v-model="value.sortable"
@@ -74,7 +68,7 @@ export default {
   data () {
     return {
       countType__: 'number',
-      animateType__: 'array',
+      animateType__: 'string',
       rowTemplateType__: 'object',
       elTableProps__: {
         border: true,

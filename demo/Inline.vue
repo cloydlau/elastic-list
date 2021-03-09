@@ -4,9 +4,7 @@
       <ElasticList
         v-model="value1"
         v-bind="$attrs.props"
-        :sortablejs-props="{
-          group: 'x',
-        }"
+        group="x"
       >
 
         <template v-slot="{item,i,showDelBtn,deleteRow}">
@@ -27,9 +25,7 @@
       <ElasticList
         v-model="value2"
         v-bind="$attrs.props"
-        :sortablejs-props="{
-          group: 'x',
-        }"
+        group="x"
       >
 
         <template v-slot="{item,i,showDelBtn,deleteRow}">

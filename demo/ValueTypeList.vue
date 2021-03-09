@@ -3,7 +3,7 @@
     <ElasticList
       v-model="value"
       v-bind="$attrs.props"
-      :row-template="rowTemplate"
+      :rowRemplate="rowTemplate"
       v-if="!loading"
       ref="elasticList"
     >
