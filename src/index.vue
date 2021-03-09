@@ -47,7 +47,11 @@
             :deleteRow="deleteRow"
           />
         </div>
-        <div class="placeholder" v-show="!value||value.length===0" :key="'placeholder'">
+        <div class="placeholder"
+             v-show="!value||value.length===0"
+             :key="'placeholder'"
+             onmousedown="return false"
+        >
           <slot name="placeholder"/>
         </div>
       </div>
