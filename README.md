@@ -1,4 +1,4 @@
-# elastic-list / 弹性列表&动态表格
+# elastic-list
 
 ![preview](./preview.gif)
 
@@ -193,12 +193,12 @@ transfer among components:
 
 | Attribute | Description | Configuration Mode | Type | Accepted Values | Default |
 | --- | --- | --- | --- | --- | --- |
-| v-model / value | 双绑 | props | array | | |
+| v-model | value | 双绑 | props | array | | |
 | elTableProps | el-table配置 | global，props | object | *see below* | |
 | sortable | 是否开启拖拉拽排序 | global，props | boolean | | true |
 | disabled | 禁用模式下无法新增、删除、排序 | global，props | boolean | | false |
 | count | 行数限制 | global，props | number, array | *see below* | |
-| rowTemplate | 新增row对应的模板 | global，props | object, function | *see below* | {} / '' |
+| rowTemplate | 新增row对应的模板 | global，props | object, function | *see below* | {} | '' |
 | ... | sortablejs配置 | global，props | | *see below* | |
 
 <br/>
@@ -323,7 +323,7 @@ Vue.use(ElasticList, {
 
 ### value监听
 
-组件内不会监听非对象数组类型的value的后续变化 如果value在初始化后需要修改 可使用以下方式：
+组件内不会监听非对象数组类型value的后续变化 如果value在初始化后需要修改 可使用以下方式：
 
 ::: tip  
 为什么？
