@@ -42,6 +42,7 @@
     "@vue/cli-plugin-typescript": "4",
     "@vue/cli-service": "4",
     "babel-plugin-import": "1",
+    "core-js": "3",
     "element-ui": "2",
     "json-editor-vue": "0",
     "sass": "1",

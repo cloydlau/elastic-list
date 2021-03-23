@@ -27,7 +27,12 @@
 
       <span @click="appendRow" v-show="canAppend">
         <slot name="append-row-btn">
-          <el-button icon="el-icon-plus" class="append-row-btn"/>
+          <el-button
+            icon="el-icon-plus"
+            type="primary"
+            class="append-row-btn"
+            plain
+          />
         </slot>
       </span>
     </template>
@@ -116,7 +121,7 @@ export default {
     sortable: {
       validator: value => value === '' || ['boolean'].includes(typeOf(value)),
     },
-    animate: [String, Array]
+    animate: [String, Array],
   },
   computed: {
     activeClass () {
@@ -295,16 +300,18 @@ export default {
   },*/
   methods: {
     mapValue (value) {
-      this.value__ = value?.map(v => {
-        const vIsPlainObject = v && isPlainObject(v)
-        if (!vIsPlainObject) {
-          this.isPlainObjectArray = false
-        }
-        return {
-          ...vIsPlainObject && v,
-          [this.rowKey]: uuidv1(),
-        }
-      })
+      if (value) {
+        this.value__ = value.map(v => {
+          const vIsPlainObject = v && isPlainObject(v)
+          if (!vIsPlainObject) {
+            this.isPlainObjectArray = false
+          }
+          return {
+            ...vIsPlainObject && v,
+            [this.rowKey]: uuidv1(),
+          }
+        })
+      }
     },
     setValue (value) {
       this.syncValue(value)
@@ -490,7 +497,6 @@ export default {
 
   .append-row-btn {
     width: 100%;
-    margin-top: 16px;
   }
 }
 </style>
