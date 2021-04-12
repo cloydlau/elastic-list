@@ -1,8 +1,9 @@
 {
   "name": "elastic-list",
-  "version": "0.3.3",
+  "version": "0.4.0",
   "author": "cloydlau",
   "license": "MIT",
+  "private": false,
   "description": "A drag-and-drop & editable table, custom list supported.",
   "keywords": [
     "dynamic",
@@ -15,40 +16,45 @@
     "table",
     "list"
   ],
-  "private": false,
-  "main": "dist/elastic-list.umd.min.js",
   "repository": {
     "type": "git",
     "url": ""
   },
+  "main": "./dist/elastic-list.umd.js",
+  "module": "./dist/elastic-list.es.js",
+  "exports": {
+    ".": {
+      "import": "./dist/elastic-list.es.js",
+      "require": "./dist/elastic-list.umd.js"
+    },
+    "./dist/style.css": "./dist/style.css"
+  },
   "scripts": {
-    "dev": "vue-cli-service serve",
-    "build": "vue-cli-service build",
-    "lib": "vue-cli-service build --target lib --name elastic-list src/main.ts"
+    "dev": "vite",
+    "build": "vite build",
+    "serve": "vite preview",
+    "clean": "rd /s /q .\\node_modules",
+    "ri": "npm run clean && pnpm i"
   },
   "dependencies": {
-    "animate.css": "4",
-    "kayran": "0",
-    "lodash": "4",
-    "sortablejs": "1",
-    "uuid": "8"
+    "animate.css": "^4.1.1",
+    "lodash": "^4.17.21",
+    "sortablejs": "^1.13.0",
+    "uuid": "^8.3.2"
   },
   "peerDependencies": {
     "element-ui": "2",
     "vue": "2"
   },
   "devDependencies": {
-    "@vue/cli-plugin-babel": "4",
-    "@vue/cli-plugin-typescript": "4",
-    "@vue/cli-service": "4",
-    "babel-plugin-import": "1",
-    "core-js": "3",
-    "element-ui": "2",
-    "json-editor-vue": "0",
-    "sass": "1",
-    "sass-loader": "10",
-    "typescript": "4",
-    "vue": "2",
-    "vue-template-compiler": "2"
+    "babel-plugin-import": "^1.13.3",
+    "element-ui": "^2.15.1",
+    "json-editor-vue": "^0.0.4",
+    "sass": "^1.32.8",
+    "typescript": "^4.2.4",
+    "vite": "^2.1.5",
+    "vite-plugin-vue2": "^1.4.3",
+    "vite-plugin-windicss": "^0.14.0",
+    "vue": "^2.6.12"
   }
 }

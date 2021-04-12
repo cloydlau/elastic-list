@@ -1,5 +1,5 @@
 <template>
-  <div :id="id" class="elastic-list" v-if="show">
+  <div :id="id" class="elastic-list h-full" v-if="show">
     <!--<div v-for="v of value">{{v}}</div>-->
     <template v-if="mode === 'elTable'">
       <el-table :data="value__" v-bind="ElTableProps" v-on="$listeners">
@@ -30,7 +30,7 @@
           <el-button
             icon="el-icon-plus"
             type="primary"
-            class="append-row-btn"
+            class="w-full"
             plain
           />
         </slot>
@@ -39,11 +39,14 @@
 
     <template v-else>
       <div
-        class="list"
+        class="list block h-full relative"
         :enter-active-class="activeClass[0]&&adding?`animate__animated animate__${activeClass[0]}`:''"
         :leave-active-class="activeClass[1]?`animate__animated animate__${activeClass[1]}`:''"
       >
-        <div v-for="(v,i) of value__" :key="value__[i][rowKey]" class="item">
+        <div
+          v-for="(v,i) of value__"
+          :key="value__[i][rowKey]"
+          :class="`select-none relative ${Disabled?'':'cursor-move'}`">
           <slot
             :i="i"
             :v="v"
@@ -52,7 +55,7 @@
             :deleteRow="deleteRow"
           />
         </div>
-        <div class="placeholder"
+        <div class="absolute top-0 left-0"
              v-show="!value||value.length===0"
              :key="'placeholder'"
              onmousedown="return false"
@@ -74,11 +77,11 @@
 
 <script>
 import Vue from 'vue'
-import 'animate.css'
+//import 'animate.css'
 import { cloneDeep, isPlainObject } from 'lodash'
-import uuidv1 from 'uuid/dist/esm-browser/v1'
-import { typeOf } from 'kayran'
+import { v1 as uuidv1 } from 'uuid'
 import globalProps from './config'
+import Sortable from 'sortablejs'
 
 const { sortable, elTableProps, disabled, count, rowTemplate, animate, sortablejsProps } = globalProps
 
@@ -107,7 +110,7 @@ export default {
   },
   props: {
     value: {
-      validator: value => ['null', 'array'].includes(typeOf(value)),
+      validator: value => Array.isArray(value) || value === null,
     },
     count: [Number, Array],
     rowTemplate: {},
@@ -116,10 +119,10 @@ export default {
     disabled: {
       // 不能用type 因为type为Boolean时 如果用户没传 默认值为false而不是undefined 会影响getFinalProp的判断
       // 由此带来的副作用：如果使用者只是书写了该属性但并没有显式指定其值为true的话 其值为''
-      validator: value => value === '' || ['boolean'].includes(typeOf(value)),
+      validator: value => value === '' || typeof value === 'boolean',
     },
     sortable: {
-      validator: value => value === '' || ['boolean'].includes(typeOf(value)),
+      validator: value => value === '' || typeof value === 'boolean',
     },
     animate: [String, Array],
   },
@@ -344,7 +347,7 @@ export default {
     },*/
     sort () {
       if (this.Sortable) {
-        const Sortable = require('sortablejs').default //(await import('sortablejs')).default 在生产环境报错
+        //const Sortable = require('sortablejs').default //(await import('sortablejs')).default 在生产环境报错
         const el = document.querySelector('#' + this.id + (this.mode === 'elTable' ? ' tbody' : ' .list'))
         this.sortablejs = Sortable.create(el, {
           ...this.SortablejsProps,
@@ -474,29 +477,5 @@ export default {
 </script>
 
 <style lang="scss" scoped>
-.elastic-list {
-  height: 100%;
 
-  .list {
-    display: block;
-    height: 100%;
-    position: relative;
-
-    & > .item {
-      user-select: none;
-      cursor: move;
-      position: relative;
-    }
-
-    & > .placeholder {
-      position: absolute;
-      top: 0;
-      left: 0;
-    }
-  }
-
-  .append-row-btn {
-    width: 100%;
-  }
-}
 </style>

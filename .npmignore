@@ -29,3 +29,9 @@ tsconfig.json
 .env.development
 /preview*.*
 demo/
+coverage/
+tests/
+.gitattributes
+.gitignore
+vite.config.ts
+windi.config.ts

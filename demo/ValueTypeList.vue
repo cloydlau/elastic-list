@@ -29,7 +29,7 @@
 
 <script>
 import { JsonEditorVue } from 'json-editor-vue'
-import ElasticList from '../src/index'
+import ElasticList from '../src/main.ts'
 
 export default {
   components: { ElasticList, JsonEditorVue },

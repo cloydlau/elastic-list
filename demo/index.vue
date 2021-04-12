@@ -21,11 +21,11 @@
 </template>
 
 <script>
-import Table from './Table'
-import ValueTypeList from './ValueTypeList'
-import RefTypeList from './RefTypeList'
-import PropsEditor from './PropsEditor'
-import Inline from './Inline'
+import Table from './Table.vue'
+import ValueTypeList from './ValueTypeList.vue'
+import RefTypeList from './RefTypeList.vue'
+import PropsEditor from './PropsEditor.vue'
+import Inline from './Inline.vue'
 
 export default {
   components: { Table, ValueTypeList, RefTypeList, Inline, PropsEditor },

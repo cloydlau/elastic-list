@@ -31,13 +31,10 @@
 
 ![NPM](https://nodei.co/npm/elastic-list.png)
 
-``` bash
-$ yarn add elastic-list
-```
-
 **Dependencies**：vue element-ui?
 
 ```js
+import 'elastic-list/dist/style.css'
 import ElasticList from 'elastic-list'
 
 // 局部引入

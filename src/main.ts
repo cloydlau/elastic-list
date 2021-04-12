@@ -1,3 +1,5 @@
+import 'virtual:windi.css'
+
 import ElasticList from './index.vue'
 import { init } from './config'
 
@@ -24,8 +26,3 @@ if (typeof window !== 'undefined' && window.Vue) {
 ElasticList.install = install
 
 export default ElasticList
-
-// todo: deprecated
-export {
-  ElasticList
-}
