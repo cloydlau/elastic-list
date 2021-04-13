@@ -46,7 +46,7 @@
         <div
           v-for="(v,i) of value__"
           :key="value__[i][rowKey]"
-          :class="`select-none relative ${Disabled?'':'cursor-move'}`">
+          :class="`select-none relative ${Sortable?'cursor-move':''}`">
           <slot
             :i="i"
             :v="v"
