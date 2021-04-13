@@ -37,7 +37,6 @@
     "ri": "npm run clean && pnpm i"
   },
   "dependencies": {
-    "animate.css": "^4.1.1",
     "lodash": "^4.17.21",
     "sortablejs": "^1.13.0",
     "uuid": "^8.3.2"
